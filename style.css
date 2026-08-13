@@ -1,0 +1,741 @@
+:root{
+    --gold-1:#fff6c9;
+    --gold-2:#ffcf3f;
+    --gold-3:#e8a413;
+    --gold-4:#a5670b;
+    --gold-5:#5c3a06;
+    --bg-0:#08060a;
+    --bg-1:#100b14;
+    --bg-2:#1a1220;
+    --ink:#f1e6c8;
+    --ink-dim:#8b7f6a;
+    --px:4px; /* base pixel unit for bevels/notches */
+  }
+
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0;
+    padding:0;
+    background:var(--bg-0);
+    color:var(--ink);
+    font-family:'VT323', monospace;
+    overflow-x:hidden;
+    width:100%;
+    min-height:100%;
+    image-rendering:pixelated;
+    -webkit-font-smoothing:none;
+  }
+  img{ image-rendering:pixelated; }
+
+  .pixel-font{ font-family:'Press Start 2P', monospace; }
+
+  /* ---------- background atmosphere ---------- */
+  .bg-fixed{
+    position:fixed;
+    inset:0;
+    z-index:0;
+    background:
+      radial-gradient(ellipse at 50% 10%, rgba(232,164,19,0.14) 0%, rgba(0,0,0,0) 55%),
+      radial-gradient(ellipse at 50% 100%, rgba(232,164,19,0.10) 0%, rgba(0,0,0,0) 60%),
+      linear-gradient(180deg, var(--bg-0) 0%, var(--bg-1) 45%, var(--bg-0) 100%);
+    pointer-events:none;
+  }
+  .bg-fixed::before{
+    content:'';
+    position:absolute;
+    inset:0;
+    background-image:
+      linear-gradient(rgba(232,164,19,0.06) 2px, transparent 2px),
+      linear-gradient(90deg, rgba(232,164,19,0.06) 2px, transparent 2px);
+    background-size:32px 32px;
+    mask-image:radial-gradient(ellipse at 50% 35%, black 0%, transparent 75%);
+  }
+  /* CRT scanlines (no blend-mode: avoids forcing a full-screen
+     repaint of every layer beneath it on each animation frame,
+     which is what was making the intro feel sluggish) */
+  .scanlines{
+    position:fixed;
+    inset:0;
+    z-index:3;
+    pointer-events:none;
+    background:repeating-linear-gradient(
+      180deg,
+      rgba(0,0,0,0.22) 0px,
+      rgba(0,0,0,0.22) 1px,
+      transparent 2px,
+      transparent 4px
+    );
+    opacity:0.35;
+  }
+  .vignette{
+    position:fixed;
+    inset:0;
+    z-index:1;
+    pointer-events:none;
+    box-shadow: inset 0 0 20vw rgba(0,0,0,0.9);
+  }
+
+  #particles{
+    position:fixed;
+    inset:0;
+    z-index:1;
+    pointer-events:none;
+    overflow:hidden;
+  }
+  .ember{
+    position:absolute;
+    bottom:-5%;
+    background:var(--gold-2);
+    box-shadow:0 0 0 1px rgba(232,164,19,0.5);
+    opacity:0;
+    animation-name:rise;
+    animation-timing-function:linear; /* was steps(8): made every ember visibly teleport instead of float, which read as lag */
+    animation-iteration-count:infinite;
+    will-change:transform, opacity;
+  }
+  @keyframes rise{
+    0%{ transform:translateY(0) translateX(0); opacity:0; }
+    8%{ opacity:0.95; }
+    50%{ transform:translateY(-50vh) translateX(var(--drift,10px)); opacity:0.8;}
+    92%{ opacity:0.15; }
+    100%{ transform:translateY(-105vh) translateX(calc(var(--drift,10px) * 2)); opacity:0; }
+  }
+
+  /* ---------- pixel notch panel shape ---------- */
+  .notched{
+    clip-path: polygon(
+      0 var(--px), var(--px) var(--px), var(--px) 0,
+      calc(100% - var(--px)) 0, calc(100% - var(--px)) var(--px), 100% var(--px),
+      100% calc(100% - var(--px)), calc(100% - var(--px)) calc(100% - var(--px)), calc(100% - var(--px)) 100%,
+      var(--px) 100%, var(--px) calc(100% - var(--px)), 0 calc(100% - var(--px))
+    );
+  }
+
+  /* ---------- intro overlay ---------- */
+  #intro{
+    position:fixed;
+    inset:0;
+    z-index:50;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    background:#000;
+    cursor:pointer;
+    /* smooth ease instead of steps(): a stepped fade on a full-screen
+       overlay looks like the page freezing then jumping, not a fade */
+    transition:opacity 0.35s ease, visibility 0.35s ease;
+  }
+  #intro.hide{
+    opacity:0;
+    visibility:hidden;
+    pointer-events:none;
+  }
+  #intro .intro-logo{
+    width:min(78vw, 420px);
+    opacity:0;
+    animation:pixelPop 0.55s steps(5,end) forwards;
+    animation-delay:0.1s;
+    filter:drop-shadow(0 0 0 #000) drop-shadow(4px 4px 0 rgba(0,0,0,0.6));
+  }
+  @keyframes pixelPop{
+    0%{ opacity:0; transform:scale(0.3); filter:brightness(3) contrast(1.5); }
+    50%{ opacity:1; transform:scale(1.12); filter:brightness(1.6); }
+    75%{ transform:scale(0.94); }
+    100%{ opacity:1; transform:scale(1); filter:brightness(1); }
+  }
+
+  .toast{
+    margin-top:26px;
+    padding:10px 18px;
+    background:var(--bg-2);
+    border:var(--px) solid #000;
+    box-shadow:
+      inset 3px 3px 0 0 rgba(255,246,201,0.35),
+      inset -3px -3px 0 0 rgba(0,0,0,0.5);
+    font-size:0.68rem;
+    letter-spacing:0.04em;
+    color:var(--gold-2);
+    opacity:0;
+    transform:translateY(-16px);
+    animation:toastIn 0.3s ease forwards;
+    animation-delay:0.7s;
+  }
+  @keyframes toastIn{
+    to{ opacity:1; transform:translateY(0); }
+  }
+
+  .intro-hint{
+    position:absolute;
+    bottom:40px;
+    font-family:'Press Start 2P', monospace;
+    font-size:0.7rem;
+    letter-spacing:0.08em;
+    color:var(--gold-1);
+    text-transform:uppercase;
+    opacity:0;
+    animation:blinkHint 1s steps(1) infinite, hintAppear 0.1s linear forwards;
+    animation-delay:1.15s, 1.15s;
+  }
+  @keyframes hintAppear{ to{ opacity:1; } }
+  @keyframes blinkHint{
+    0%,100%{ visibility:visible; }
+    50%{ visibility:hidden; }
+  }
+
+  /* ---------- main content ---------- */
+  #main{
+    position:relative;
+    z-index:2;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    padding:8vh 5vw 10vh;
+    text-align:center;
+    opacity:0;
+  }
+  #main.reveal{
+    animation:fadeUp 0.45s ease forwards;
+  }
+  @keyframes fadeUp{ to{ opacity:1; } }
+
+  .logo-main{
+    width:min(88vw, 460px);
+    margin-bottom:8px;
+    animation:float 3s ease-in-out infinite;
+    filter:drop-shadow(0 6px 0 rgba(0,0,0,0.5));
+  }
+  @keyframes float{
+    0%,100%{ transform:translateY(0); }
+    50%{ transform:translateY(-8px); }
+  }
+
+  .kicker{
+    font-family:'Press Start 2P', monospace;
+    font-size:0.6rem;
+    letter-spacing:0.25em;
+    text-transform:uppercase;
+    color:var(--gold-3);
+    margin:6px 0 28px;
+  }
+
+  .rule{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin:0 0 30px;
+    width:min(320px, 70vw);
+  }
+  .rule .blk{
+    flex:1;
+    height:4px;
+    background:repeating-linear-gradient(90deg, var(--gold-4) 0 6px, transparent 6px 10px);
+  }
+  .rule .diamond{
+    width:10px; height:10px;
+    background:var(--gold-2);
+    transform:rotate(45deg);
+    box-shadow:0 0 0 2px #000;
+  }
+
+  /* ---------- golden ticket / quest panel ---------- */
+  .ticket{
+    position:relative;
+    width:min(480px, 92vw);
+    background:var(--bg-2);
+    border:var(--px) solid #000;
+    padding:30px 26px 24px;
+    text-align:left;
+    box-shadow:
+      inset 4px 4px 0 0 rgba(255,246,201,0.18),
+      inset -4px -4px 0 0 rgba(0,0,0,0.55),
+      8px 8px 0 0 rgba(0,0,0,0.7);
+  }
+
+  .ticket-top{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:14px;
+    flex-wrap:wrap;
+    gap:8px;
+  }
+  .ticket-label{
+    font-family:'Press Start 2P', monospace;
+    font-size:0.55rem;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--gold-2);
+    background:var(--gold-5);
+    padding:5px 8px;
+    border:2px solid #000;
+  }
+  .ticket-serial{
+    font-family:'Press Start 2P', monospace;
+    font-size:0.5rem;
+    letter-spacing:0.05em;
+    color:var(--ink-dim);
+  }
+
+  .ticket h2{
+    font-family:'Press Start 2P', monospace;
+    font-size:0.95rem;
+    line-height:1.6;
+    letter-spacing:0.02em;
+    color:var(--gold-1);
+    margin:0 0 12px;
+  }
+
+  .ticket p{
+    font-size:1.4rem;
+    line-height:1.45;
+    color:var(--ink);
+    margin:0 0 18px;
+  }
+
+  .teaser{
+    margin:0 !important;
+    color:var(--gold-3) !important;
+    font-style:italic;
+  }
+
+  /* perforated seam with punch-hole notches, like a real ticket stub */
+  .perf-row{
+    position:relative;
+    margin:20px -26px;
+    padding:0 26px;
+  }
+  .perf-row::before, .perf-row::after{
+    content:'';
+    position:absolute;
+    top:50%;
+    width:22px;
+    height:22px;
+    border-radius:50%;
+    background:var(--bg-0);
+    box-shadow:0 0 0 3px #000, 0 0 0 4px var(--gold-4) inset;
+    transform:translateY(-50%);
+  }
+  .perf-row::before{ left:-11px; }
+  .perf-row::after{ right:-11px; }
+  .perf{
+    border:none;
+    border-top:3px dashed var(--gold-4);
+    margin:0;
+    opacity:0.6;
+  }
+
+  /* expand/collapse toggle ("pull tab") */
+  .ticket-toggle{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    width:100%;
+    padding:11px 10px;
+    background:var(--bg-1);
+    border:3px solid #000;
+    color:var(--gold-2);
+    font-family:'Press Start 2P', monospace;
+    font-size:0.55rem;
+    letter-spacing:0.04em;
+    text-transform:uppercase;
+    cursor:pointer;
+    box-shadow:
+      inset 2px 2px 0 0 rgba(255,246,201,0.15),
+      inset -2px -2px 0 0 rgba(0,0,0,0.5);
+    transition:color 0.15s ease, background 0.15s ease;
+  }
+  .ticket-toggle:hover{ color:var(--gold-1); background:#211830; }
+  .ticket-toggle .chevron{
+    display:inline-block;
+    transition:transform 0.25s ease;
+  }
+  .ticket-toggle[aria-expanded="true"] .chevron{ transform:rotate(180deg); }
+
+  /* smooth height animation without JS measuring (grid-rows trick) */
+  .ticket-expand-wrap{
+    display:grid;
+    grid-template-rows:0fr;
+    transition:grid-template-rows 0.4s ease;
+  }
+  .ticket-expand-wrap.open{ grid-template-rows:1fr; }
+  .ticket-expand-inner{
+    overflow:hidden;
+    min-height:0;
+  }
+  .ticket-expand-inner > p{
+    margin:20px 0 18px;
+  }
+
+  .ticket-meta{
+    display:flex;
+    justify-content:space-between;
+    gap:12px;
+    flex-wrap:wrap;
+    font-family:'Press Start 2P', monospace;
+    font-size:0.5rem;
+    letter-spacing:0.03em;
+    text-transform:uppercase;
+    color:var(--ink-dim);
+  }
+  .ticket-meta b{
+    display:block;
+    color:var(--gold-2);
+    font-size:0.6rem;
+    letter-spacing:0.02em;
+    margin-top:6px;
+    line-height:1.5;
+  }
+
+  /* ---------- CTA ---------- */
+  .cta-wrap{
+    margin-top:36px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:16px;
+  }
+
+  .cta{
+    display:inline-block;
+    font-family:'Press Start 2P', monospace;
+    font-size:0.75rem;
+    letter-spacing:0.03em;
+    text-transform:uppercase;
+    text-decoration:none;
+    color:#241704;
+    background:linear-gradient(180deg, var(--gold-1) 0%, var(--gold-2) 45%, var(--gold-3) 100%);
+    border:4px solid #000;
+    padding:16px 30px;
+    cursor:pointer;
+    position:relative;
+    box-shadow:
+      inset 3px 3px 0 0 rgba(255,255,255,0.55),
+      inset -4px -4px 0 0 rgba(0,0,0,0.35),
+      6px 6px 0 0 rgba(0,0,0,0.7);
+    transition:transform 0.08s steps(1), box-shadow 0.08s steps(1);
+  }
+  .cta:hover{
+    transform:translate(2px,2px);
+    box-shadow:
+      inset -3px -3px 0 0 rgba(255,255,255,0.35),
+      inset 4px 4px 0 0 rgba(0,0,0,0.35),
+      4px 4px 0 0 rgba(0,0,0,0.7);
+  }
+  .cta:active{
+    transform:translate(6px,6px);
+    box-shadow:
+      inset -3px -3px 0 0 rgba(255,255,255,0.35),
+      inset 4px 4px 0 0 rgba(0,0,0,0.45),
+      0 0 0 0 rgba(0,0,0,0.7);
+  }
+
+  .cta-note{
+    font-size:1.1rem;
+    color:var(--ink-dim);
+    letter-spacing:0.02em;
+  }
+
+  footer{
+    margin-top:52px;
+    font-family:'Press Start 2P', monospace;
+    font-size:0.5rem;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    color:var(--gold-5);
+    line-height:1.8;
+  }
+
+  /* ---------- modal (placeholder for future questionnaire) ---------- */
+  #modal-overlay{
+    position:fixed;
+    inset:0;
+    z-index:100;
+    background:rgba(5,4,3,0.85);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity 0.2s ease;
+    padding:24px;
+  }
+  #modal-overlay.show{ opacity:1; pointer-events:auto; }
+  .modal-box{
+    width:min(420px, 100%);
+    background:var(--bg-2);
+    border:4px solid #000;
+    box-shadow:
+      inset 4px 4px 0 0 rgba(255,246,201,0.18),
+      inset -4px -4px 0 0 rgba(0,0,0,0.55),
+      8px 8px 0 0 rgba(0,0,0,0.7);
+    padding:30px 26px;
+    text-align:center;
+    transform:translateY(10px);
+    transition:transform 0.2s ease;
+  }
+  #modal-overlay.show .modal-box{ transform:translateY(0); }
+  .modal-box h3{
+    font-family:'Press Start 2P', monospace;
+    color:var(--gold-2);
+    letter-spacing:0.02em;
+    margin:0 0 16px;
+    font-size:0.85rem;
+    line-height:1.7;
+  }
+  .modal-box p{
+    font-size:1.3rem;
+    color:var(--ink);
+    line-height:1.5;
+    margin:0 0 22px;
+  }
+  .modal-box button{
+    font-family:'Press Start 2P', monospace;
+    font-size:0.6rem;
+    letter-spacing:0.04em;
+    text-transform:uppercase;
+    color:var(--gold-2);
+    background:var(--bg-1);
+    border:3px solid #000;
+    padding:10px 20px;
+    cursor:pointer;
+    box-shadow:
+      inset 2px 2px 0 0 rgba(255,246,201,0.2),
+      inset -2px -2px 0 0 rgba(0,0,0,0.5);
+  }
+  .modal-box button:hover{
+    color:var(--gold-1);
+  }
+
+  /* ---------- requirement chips ---------- */
+  .req-chips{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-top:16px;
+  }
+  .req-chip{
+    font-family:'Press Start 2P', monospace;
+    font-size:0.46rem;
+    letter-spacing:0.03em;
+    text-transform:uppercase;
+    color:var(--ink-dim);
+    background:var(--bg-1);
+    border:2px solid var(--gold-5);
+    padding:6px 8px;
+    line-height:1.4;
+  }
+
+  /* ---------- secondary CTA (Discord) ---------- */
+  .cta-secondary{
+    background:var(--bg-1);
+    color:var(--gold-2);
+    box-shadow:
+      inset 2px 2px 0 0 rgba(255,246,201,0.12),
+      inset -2px -2px 0 0 rgba(0,0,0,0.5),
+      6px 6px 0 0 rgba(0,0,0,0.7);
+  }
+  .cta-secondary:hover{ color:var(--gold-1); }
+
+  /* ---------- server status pill ---------- */
+  .server-status{
+    display:inline-flex;
+    align-items:center;
+    gap:9px;
+    margin:2px 0 22px;
+    padding:8px 14px;
+    background:var(--bg-1);
+    border:2px solid var(--gold-5);
+    font-size:1rem;
+    color:var(--ink-dim);
+  }
+  .status-dot{
+    width:10px;
+    height:10px;
+    border-radius:50%;
+    background:var(--ink-dim);
+    box-shadow:0 0 0 2px #000;
+    flex-shrink:0;
+  }
+  .status-dot.online{
+    background:#5ee06c;
+    box-shadow:0 0 0 2px #000, 0 0 8px 1px rgba(94,224,108,0.7);
+    animation:statusPulse 1.6s ease-in-out infinite;
+  }
+  .status-dot.offline{
+    background:#e8746c;
+    box-shadow:0 0 0 2px #000, 0 0 6px 1px rgba(232,116,108,0.5);
+  }
+  @keyframes statusPulse{
+    0%,100%{ opacity:1; }
+    50%{ opacity:0.45; }
+  }
+
+  /* ---------- two-column layout (invite + rules side by side on
+     wide screens, so the extra horizontal space actually gets used
+     instead of leaving big empty margins on either side) ---------- */
+  .panels{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:26px;
+    width:100%;
+    max-width:1100px;
+  }
+  .panel{
+    width:100%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+  }
+  .panel .ticket{ width:100%; max-width:520px; }
+  @media (min-width:900px){
+    .panels{
+      flex-direction:row;
+      align-items:flex-start;
+      justify-content:center;
+      gap:36px;
+    }
+    .panel{ flex:1 1 0; }
+  }
+
+  /* ---------- rules list ---------- */
+  .rules-list{
+    margin:20px 0 0;
+    padding-left:1.4em;
+    color:var(--ink);
+    font-size:1.25rem;
+    line-height:1.6;
+  }
+  .rules-list li{ margin-bottom:10px; }
+  .rules-list li::marker{
+    color:var(--gold-3);
+    font-family:'Press Start 2P', monospace;
+    font-size:0.7rem;
+  }
+
+  /* ---------- build gallery ---------- */
+  .gallery{
+    width:min(1100px, 94vw);
+    margin-top:48px;
+    text-align:center;
+  }
+  .gallery-grid{
+    display:grid;
+    /* auto-fill em vez de um número fixo de colunas: em telas largas
+       encaixa mais ladrilhos por linha automaticamente, sem precisar
+       de mais breakpoints manuais */
+    grid-template-columns:repeat(auto-fill, minmax(150px, 1fr));
+    gap:14px;
+    margin-top:8px;
+  }
+  .gallery-tile{
+    aspect-ratio:4/3;
+    background:var(--bg-1);
+    border:3px dashed var(--gold-5);
+    color:var(--ink-dim);
+    font-family:'Press Start 2P', monospace;
+    font-size:0.5rem;
+    letter-spacing:0.02em;
+    text-transform:uppercase;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:10px;
+    cursor:pointer;
+    transition:border-color 0.15s ease, color 0.15s ease;
+  }
+  .gallery-tile:hover{
+    border-color:var(--gold-3);
+    color:var(--gold-2);
+  }
+  .gallery-tile img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+  }
+
+  /* ---------- lightbox ---------- */
+  .lightbox-overlay{
+    position:fixed;
+    inset:0;
+    z-index:100;
+    background:rgba(5,4,3,0.9);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity 0.2s ease;
+    padding:24px;
+  }
+  .lightbox-overlay.show{ opacity:1; pointer-events:auto; }
+  .lightbox-box{
+    position:relative;
+    max-width:min(900px, 94vw);
+    max-height:88vh;
+  }
+  .lightbox-content img{
+    display:block;
+    max-width:100%;
+    max-height:88vh;
+    object-fit:contain;
+    border:4px solid #000;
+    box-shadow:8px 8px 0 0 rgba(0,0,0,0.7);
+  }
+  .lightbox-placeholder{
+    width:min(560px, 90vw);
+    aspect-ratio:4/3;
+    background:var(--bg-2);
+    border:3px dashed var(--gold-5);
+    color:var(--ink-dim);
+    font-size:1.1rem;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:24px;
+  }
+  .lightbox-close{
+    position:absolute;
+    top:-16px;
+    right:-16px;
+    width:34px;
+    height:34px;
+    background:var(--gold-2);
+    color:#241704;
+    border:3px solid #000;
+    font-family:'Press Start 2P', monospace;
+    font-size:0.65rem;
+    cursor:pointer;
+    box-shadow:3px 3px 0 0 rgba(0,0,0,0.7);
+  }
+
+  @media (max-width:480px){
+    .ticket{ padding:24px 18px 20px; }
+    .ticket-meta{ flex-direction:column; gap:12px; }
+    .cta{ font-size:0.65rem; padding:14px 20px; }
+    /* .gallery-grid não precisa de override aqui: o auto-fill já
+       encolhe pra 2 colunas sozinho em telas estreitas */
+  }
+
+  /* ---------- prefers-reduced-motion ---------- */
+  @media (prefers-reduced-motion: reduce){
+    #particles{ display:none; }
+    .logo-main{ animation:none; }
+    .status-dot.online{ animation:none; }
+    #intro .intro-logo{ animation:none; opacity:1; transform:none; filter:none; }
+    .toast{ animation:none; opacity:1; transform:none; }
+    .intro-hint{ animation:none; opacity:1; }
+    *, *::before, *::after{
+      animation-duration:0.01ms !important;
+      animation-iteration-count:1 !important;
+      transition-duration:0.01ms !important;
+      scroll-behavior:auto !important;
+    }
+  }

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Golden Order — Convite</title>
+<meta name="theme-color" content="#e8a413">
+
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+
+<!-- ============================================================
+     PRÉVIA AO COMPARTILHAR O LINK (Open Graph / Discord / Twitter):
+     og:image e og:url PRECISAM ser URLs absolutas (https://...) do
+     site já publicado — o Discord busca essas tags direto no seu
+     servidor, então a prévia com imagem só funciona depois que o
+     site estiver no ar. Troque "SUA_URL_AQUI" pela URL real quando
+     publicar (ex.: https://seu-usuario.github.io/golden-order/).
+     ============================================================ -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Golden Order — Convite Oficial">
+<meta property="og:description" content="Um clã de Minecraft. Um convite para poucos.">
+<meta property="og:image" content="SUA_URL_AQUI/assets/og-image.png">
+<meta property="og:url" content="SUA_URL_AQUI/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Golden Order — Convite Oficial">
+<meta name="twitter:description" content="Um clã de Minecraft. Um convite para poucos.">
+<meta name="twitter:image" content="SUA_URL_AQUI/assets/og-image.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ============================================================
+     LOGO: a logo oficial da Golden Order enviada pelo usuário já
+     está embutida abaixo (formato PNG, fundo transparente) como
+     base64. Para trocar por uma nova versão, basta substituir o
+     conteúdo do atributo src das duas tags <img class="...logo...">
+     (uma na tela de entrada #intro, outra no cabeçalho principal).
+     ============================================================ -->
+
+<div class="bg-fixed"></div>
+<div id="particles"></div>
+<div class="vignette"></div>
+<div class="scanlines"></div>
+
+<!-- Intro animation -->
+<div id="intro" tabindex="0" role="button" aria-label="Toque para entrar">
+  <img class="intro-logo" src="assets/logo.png" alt="Golden Order">
+  <div class="toast pixel-font">CONQUISTA DESBLOQUEADA: CONVITE ENCONTRADO</div>
+  <div class="intro-hint">Toque para entrar</div>
+</div>
+
+<main id="main">
+  <img class="logo-main" src="assets/logo.png" alt="Golden Order">
+  <p class="kicker">Inspirado em Elden Ring, construído em blocos</p>
+
+  <!-- Status do servidor: definido manualmente em script.js (procure
+       por SERVER_STATUS) — sem nenhuma consulta externa -->
+  <div class="server-status" id="serverStatus">
+    <span class="status-dot" id="statusDot"></span>
+    <span id="statusText">Servidor online</span>
+  </div>
+
+  <div class="rule"><span class="blk"></span><span class="diamond"></span><span class="blk"></span></div>
+
+  <div class="panels">
+    <div class="panel">
+      <div class="ticket">
+        <div class="ticket-top">
+          <span class="ticket-label">Convite Oficial</span>
+          <span class="ticket-serial">Nº 001-GO</span>
+        </div>
+        <h2>A GOLDEN ORDER<br>QUER VOCÊ</h2>
+        <p class="teaser">Um clã de Minecraft. Um convite para poucos.</p>
+
+        <div class="perf-row">
+          <hr class="perf">
+        </div>
+
+        <button class="ticket-toggle" id="ticketToggle" aria-expanded="false" aria-controls="ticketExpand">
+          <span class="toggle-text">Ver o convite completo</span>
+          <span class="chevron">▼</span>
+        </button>
+
+        <div class="ticket-expand-wrap" id="ticketExpand">
+          <div class="ticket-expand-inner">
+            <p>
+              Aqui o foco é construir, explorar e jogar em grupo com gente de confiança. Se você
+              valoriza comunidade séria tanto quanto um bom estoque de ouro, este é o seu convite.
+            </p>
+            <div class="ticket-meta">
+              <div>ADMITE<b>1 ALIADO(A)</b></div>
+              <div>PORTÃO<b>DISCORD</b></div>
+              <div>VALIDADE<b>ENQUANTO ATIVO NO GRUPO</b></div>
+            </div>
+            <div class="req-chips">
+              <span class="req-chip">Java ou Bedrock</span>
+              <span class="req-chip">13+ anos</span>
+              <span class="req-chip">Ativo no Discord</span>
+              <span class="req-chip">Respeito sempre</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="ticket rules-ticket">
+        <div class="ticket-top">
+          <span class="ticket-label">Regras Oficiais</span>
+          <span class="ticket-serial">Nº 002-GO</span>
+        </div>
+        <h2>ANTES DE ENTRAR</h2>
+        <p class="teaser">Poucas regras, mas inegociáveis.</p>
+
+        <div class="perf-row">
+          <hr class="perf">
+        </div>
+
+        <button class="ticket-toggle" id="rulesToggle" aria-expanded="false" aria-controls="rulesExpand">
+          <span class="toggle-text">Ver as regras</span>
+          <span class="chevron">▼</span>
+        </button>
+
+        <div class="ticket-expand-wrap" id="rulesExpand">
+          <div class="ticket-expand-inner">
+            <ol class="rules-list">
+              <li>Respeito acima de tudo — sem discurso de ódio, assédio ou toxicidade.</li>
+              <li>Nada de grief, roubo ou trapaça contra outros membros.</li>
+              <li>Avise no Discord se for ficar ausente por um bom tempo.</li>
+              <li>Proibido hacks, clientes modificados ou exploits.</li>
+              <li>Idade mínima de 13 anos.</li>
+              <li>Ajude quem está começando — todo mundo já foi novato.</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cta-wrap">
+    <a class="cta" id="ctaBtn" href="questionario.html">Quero Entrar na Ordem</a>
+    <!-- Troque o href abaixo pelo link de convite real do seu servidor
+         do Discord (Configurações do Servidor > Convites) -->
+    <a class="cta cta-secondary" href="https://discord.gg/SEU_CONVITE_AQUI" target="_blank" rel="noopener noreferrer">Entrar no Discord</a>
+    <span class="cta-note">Um breve formulário decide sua entrada no grupo</span>
+  </div>
+
+  <section class="gallery">
+    <p class="kicker">Construções da Ordem</p>
+    <!-- Cada .gallery-tile é um placeholder. Pra usar uma imagem real,
+         troque o conteúdo do botão por <img src="assets/builds/nome.jpg" alt="...">
+         e defina data-full="assets/builds/nome.jpg" (usado pelo lightbox). -->
+    <div class="gallery-grid" id="galleryGrid">
+      <button class="gallery-tile" type="button" data-full="">
+        <span>+ Adicionar print</span>
+      </button>
+      <button class="gallery-tile" type="button" data-full="">
+        <span>+ Adicionar print</span>
+      </button>
+      <button class="gallery-tile" type="button" data-full="">
+        <span>+ Adicionar print</span>
+      </button>
+      <button class="gallery-tile" type="button" data-full="">
+        <span>+ Adicionar print</span>
+      </button>
+      <button class="gallery-tile" type="button" data-full="">
+        <span>+ Adicionar print</span>
+      </button>
+      <button class="gallery-tile" type="button" data-full="">
+        <span>+ Adicionar print</span>
+      </button>
+    </div>
+  </section>
+
+  <footer>Golden Order · Comunidade de Minecraft<br>Construída sobre confiança e ouro</footer>
+</main>
+
+<!-- Lightbox: usado pra ampliar os prints da galeria -->
+<div id="lightbox-overlay" class="lightbox-overlay">
+  <div class="lightbox-box">
+    <button class="lightbox-close" id="lightboxClose" type="button" aria-label="Fechar">✕</button>
+    <div class="lightbox-content" id="lightboxContent"></div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>

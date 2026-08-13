@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Golden Order — Formulário de Ingresso</title>
+<meta name="theme-color" content="#e8a413">
+<meta name="robots" content="noindex">
+
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="form.css">
+</head>
+<body>
+
+<div class="bg-fixed"></div>
+<div id="particles"></div>
+<div class="vignette"></div>
+<div class="scanlines"></div>
+
+<main class="form-main">
+  <a class="back-link" href="index.html">&larr; Voltar ao convite</a>
+
+  <img class="logo-form" src="assets/logo.png" alt="Golden Order">
+  <p class="kicker">Formulário de Ingresso</p>
+
+  <form class="ticket form-ticket" id="joinForm" novalidate>
+    <div class="ticket-top">
+      <span class="ticket-label">Candidatura</span>
+      <span class="ticket-serial">Nº 001-GO</span>
+    </div>
+
+    <div class="field">
+      <label for="fName">Seu nome ou apelido</label>
+      <input type="text" id="fName" name="nome" required maxlength="60" autocomplete="name">
+    </div>
+
+    <div class="field">
+      <label for="fNick">Seu nick no Minecraft</label>
+      <input type="text" id="fNick" name="nick_minecraft" required maxlength="30" placeholder="Java ou Bedrock">
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label for="fAge">Idade</label>
+        <input type="number" id="fAge" name="idade" required min="8" max="99" inputmode="numeric">
+      </div>
+      <div class="field">
+        <label for="fDiscord">Usuário do Discord</label>
+        <input type="text" id="fDiscord" name="discord" required maxlength="40" placeholder="seunome">
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="fTime">Há quanto tempo joga Minecraft?</label>
+      <select id="fTime" name="tempo_de_jogo" required>
+        <option value="" disabled selected>Selecione...</option>
+        <option value="Menos de 1 ano">Menos de 1 ano</option>
+        <option value="1 a 3 anos">1 a 3 anos</option>
+        <option value="Mais de 3 anos">Mais de 3 anos</option>
+      </select>
+    </div>
+
+    <fieldset class="field">
+      <legend>Disponibilidade</legend>
+      <div class="checks">
+        <label class="check"><input type="checkbox" name="disponibilidade" value="Manhã"><span>Manhã</span></label>
+        <label class="check"><input type="checkbox" name="disponibilidade" value="Tarde"><span>Tarde</span></label>
+        <label class="check"><input type="checkbox" name="disponibilidade" value="Noite"><span>Noite</span></label>
+        <label class="check"><input type="checkbox" name="disponibilidade" value="Fins de semana"><span>Fins de semana</span></label>
+      </div>
+    </fieldset>
+
+    <div class="field">
+      <label for="fWhy">Por que quer entrar na Golden Order?</label>
+      <textarea id="fWhy" name="motivo" required maxlength="500" rows="4"></textarea>
+    </div>
+
+    <div class="field">
+      <label for="fHow">Como conheceu o clã? <span class="opt">(opcional)</span></label>
+      <input type="text" id="fHow" name="como_conheceu" maxlength="80">
+    </div>
+
+    <button type="submit" class="cta submit-btn" id="submitBtn">Enviar Candidatura</button>
+    <p class="form-note" id="formNote"></p>
+  </form>
+</main>
+
+<!-- modal de confirmação / erro no envio -->
+<div id="modal-overlay">
+  <div class="modal-box">
+    <h3 id="modalTitle">ENVIADO!</h3>
+    <p id="modalText"></p>
+    <textarea id="modalSummary" class="modal-summary" readonly hidden></textarea>
+    <div class="modal-actions">
+      <button id="modalCopy" type="button" hidden>Copiar resumo</button>
+      <button id="modalClose" type="button">Entendido</button>
+    </div>
+  </div>
+</div>
+
+<script src="form.js"></script>
+
+</body>
+</html>
