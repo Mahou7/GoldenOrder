@@ -95,9 +95,9 @@ const CONFIG = {
 
   async function sendToDiscord(data, summary) {
     const payload = {
-      username: 'Golden Order — Candidaturas',
+      username: 'Golden Order — Convites',
       embeds: [{
-        title: 'Nova candidatura recebida',
+        title: 'Convite confirmado',
         color: 15258402, // dourado
         fields: [
           { name: 'Nome/Apelido', value: data.nome || '—', inline: true },
@@ -120,7 +120,7 @@ const CONFIG = {
   }
 
   function sendByEmail(data, summary) {
-    const subject = encodeURIComponent('Candidatura — Golden Order (' + (data.nome || '') + ')');
+    const subject = encodeURIComponent('Confirmação de Convite — Golden Order (' + (data.nome || '') + ')');
     const body = encodeURIComponent(summary);
     window.location.href = `mailto:${CONFIG.fallbackEmail}?subject=${subject}&body=${body}`;
   }
@@ -144,8 +144,8 @@ const CONFIG = {
       if (usingWebhook) {
         await sendToDiscord(data, summary);
         openModal({
-          title: 'CANDIDATURA ENVIADA!',
-          text: 'Sua ficha chegou até a Golden Order. Fique de olho no Discord — alguém do clã vai te chamar em breve.',
+          title: 'CONVITE CONFIRMADO!',
+          text: 'Sua confirmação chegou até a Golden Order. Fique de olho no Discord — alguém do clã vai te chamar em breve.',
           showSummary: false,
           showCopy: false
         });
@@ -155,7 +155,7 @@ const CONFIG = {
         sendByEmail(data, summary);
         openModal({
           title: 'QUASE LÁ!',
-          text: 'Seu app de e-mail deve abrir com a candidatura pronta — é só clicar em enviar. Se nada abrir, copie o resumo abaixo e envie manualmente.',
+          text: 'Seu app de e-mail deve abrir com a confirmação pronta — é só clicar em enviar. Se nada abrir, copie o resumo abaixo e envie manualmente.',
           showSummary: true,
           summaryText: summary,
           showCopy: true
@@ -166,14 +166,14 @@ const CONFIG = {
       formNote.classList.add('error');
       openModal({
         title: 'ALGO DEU ERRADO',
-        text: 'O envio automático falhou. Copie o resumo abaixo e cole no Discord da Golden Order — ninguém vai perder sua candidatura por isso.',
+        text: 'O envio automático falhou. Copie o resumo abaixo e cole no Discord da Golden Order — ninguém vai perder sua confirmação por isso.',
         showSummary: true,
         summaryText: summary,
         showCopy: true
       });
     } finally {
       submitBtn.disabled = false;
-      submitBtn.textContent = 'Enviar Candidatura';
+      submitBtn.textContent = 'Confirmar Entrada';
     }
   });
 })();

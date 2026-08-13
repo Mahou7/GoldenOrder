@@ -1,0 +1,172 @@
+/* Golden Order — estilos da árvore de membros.
+   Depende de style.css já estar carregado (usa as mesmas variáveis
+   de cor, fontes e o padrão visual dos cards). */
+
+.tree-main{
+  position:relative;
+  z-index:2;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:9vh 5vw 10vh;
+  text-align:center;
+  opacity:1; /* style.css's generic `#main{opacity:0}` não afeta essa
+                página, já que esse <main> não tem id="main" — mas deixo
+                explícito por clareza, igual no form.css */
+}
+
+.back-link{
+  align-self:flex-start;
+  margin:0 auto 18px;
+  max-width:min(480px, 92vw);
+  width:100%;
+  font-family:'Press Start 2P', monospace;
+  font-size:0.55rem;
+  letter-spacing:0.04em;
+  color:var(--gold-3);
+  text-decoration:none;
+}
+.back-link:hover{ color:var(--gold-1); }
+
+.logo-tree{
+  width:min(60vw, 260px);
+  margin-bottom:6px;
+  filter:drop-shadow(0 4px 0 rgba(0,0,0,0.5));
+}
+
+.tree-note{
+  margin:32px auto 0;
+  max-width:min(520px, 90vw);
+  font-size:1.1rem;
+  line-height:1.5;
+  color:var(--ink-dim);
+}
+
+/* ---------- árvore genealógica (org chart em CSS puro) ---------- */
+.tree-scroll{
+  width:100%;
+  max-width:1100px;
+  overflow-x:auto;
+  padding:26px 4px 18px;
+}
+
+.org-tree, .org-tree ul{
+  display:flex;
+  justify-content:center;
+  list-style:none;
+  margin:0 auto;
+  padding:0;
+  width:max-content;
+}
+
+.org-tree li{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  position:relative;
+  padding:34px 16px 0;
+}
+
+/* barra horizontal que liga irmãos no mesmo nível, montada com metade
+   em cada <li> (::before = metade esquerda, ::after = metade direita) */
+.org-tree li::before,
+.org-tree li::after{
+  content:'';
+  position:absolute;
+  top:0;
+  width:50%;
+  height:34px;
+  border-top:2px solid var(--gold-4);
+}
+.org-tree li::before{ right:50%; border-right:2px solid var(--gold-4); }
+.org-tree li::after{ left:50%; border-left:2px solid var(--gold-4); }
+.org-tree li:only-child{ padding-top:0; }
+.org-tree li:only-child::before,
+.org-tree li:only-child::after{ display:none; }
+.org-tree li:first-child::before{ border-top:none; border-right:none; }
+.org-tree li:last-child::after{ border-top:none; border-left:none; }
+
+/* raiz (fundador): sem linha vindo de cima, nenhum irmão */
+.org-tree > li{ padding-top:0; }
+.org-tree > li::before,
+.org-tree > li::after{ display:none; }
+
+/* traço vertical de cada nó até a barra horizontal acima dele */
+.tree-node{ position:relative; }
+.org-tree li > .tree-node::before{
+  content:'';
+  position:absolute;
+  top:-34px;
+  left:50%;
+  width:0;
+  height:34px;
+  border-left:2px solid var(--gold-4);
+}
+.org-tree > li > .tree-node::before{ display:none; }
+
+.tree-node{
+  background:var(--bg-1);
+  border:3px solid #000;
+  padding:14px 16px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:6px;
+  min-width:120px;
+  box-shadow:
+    inset 2px 2px 0 0 rgba(255,246,201,0.12),
+    inset -2px -2px 0 0 rgba(0,0,0,0.5);
+}
+.tree-node-root{
+  border-color:var(--gold-3);
+  box-shadow:
+    inset 2px 2px 0 0 rgba(255,246,201,0.2),
+    inset -2px -2px 0 0 rgba(0,0,0,0.5),
+    0 0 0 3px rgba(232,164,19,0.25);
+}
+.tree-node-member{
+  padding:10px 14px;
+  min-width:90px;
+}
+
+.tree-avatar{
+  width:44px;
+  height:44px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:linear-gradient(180deg, var(--gold-2), var(--gold-4));
+  color:#241704;
+  font-family:'Press Start 2P', monospace;
+  font-size:0.9rem;
+  border:3px solid #000;
+  flex-shrink:0;
+}
+.tree-name{
+  margin:0;
+  font-size:1rem;
+  color:var(--ink);
+  white-space:nowrap;
+}
+.tree-role{
+  margin:0;
+  font-family:'Press Start 2P', monospace;
+  font-size:0.42rem;
+  letter-spacing:0.05em;
+  text-transform:uppercase;
+  color:var(--gold-3);
+}
+
+@media (max-width:480px){
+  .tree-node{ min-width:100px; padding:12px 12px; }
+}
+
+@media (prefers-reduced-motion: reduce){
+  *, *::before, *::after{
+    animation-duration:0.01ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:0.01ms !important;
+    scroll-behavior:auto !important;
+  }
+}

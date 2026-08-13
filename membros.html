@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Golden Order — Árvore de Membros</title>
+<meta name="theme-color" content="#e8a413">
+<meta name="robots" content="noindex">
+
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="membros.css">
+</head>
+<body>
+
+<div class="bg-fixed"></div>
+<div id="particles"></div>
+<div class="vignette"></div>
+<div class="scanlines"></div>
+
+<main class="tree-main">
+  <a class="back-link" href="index.html">&larr; Voltar ao convite</a>
+
+  <img class="logo-tree" src="assets/logo.png" alt="Golden Order">
+  <p class="kicker">A Árvore da Ordem</p>
+
+  <!-- Árvore genealógica em HTML/CSS puro (sem JavaScript).
+       Cada pessoa é um <li> com um .tree-node dentro. Pra adicionar
+       alguém no mesmo nível de outra pessoa, copie o <li> dela inteiro
+       (incluindo a </li> de fechamento) e troque o nome/cargo. Pra dar
+       a alguém um cargo abaixo dela (subordinados), coloque um novo
+       <ul>...</ul> dentro do <li> dessa pessoa, do mesmo jeito que o
+       Moderador abaixo tem os "Membros" dependurados nele. -->
+  <div class="tree-scroll">
+    <ul class="org-tree">
+      <li>
+        <div class="tree-node tree-node-root">
+          <span class="tree-avatar">F</span>
+          <p class="tree-name">Nome do Fundador</p>
+          <p class="tree-role">Fundador</p>
+        </div>
+        <ul>
+          <li>
+            <div class="tree-node">
+              <span class="tree-avatar">C</span>
+              <p class="tree-name">Nome do Co-fundador</p>
+              <p class="tree-role">Co-fundador</p>
+            </div>
+          </li>
+          <li>
+            <div class="tree-node">
+              <span class="tree-avatar">M</span>
+              <p class="tree-name">Nome do Moderador</p>
+              <p class="tree-role">Moderador</p>
+            </div>
+            <ul>
+              <li>
+                <div class="tree-node tree-node-member">
+                  <p class="tree-name">Membro</p>
+                </div>
+              </li>
+              <li>
+                <div class="tree-node tree-node-member">
+                  <p class="tree-name">Membro</p>
+                </div>
+              </li>
+              <li>
+                <div class="tree-node tree-node-member">
+                  <p class="tree-name">Membro</p>
+                </div>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+
+  <p class="tree-note">Essa é a estrutura da Golden Order — da fundação até quem entrou por último.</p>
+</main>
+
+</body>
+</html>
