@@ -1,0 +1,46 @@
+/* Golden Order — página de agradecimento quando o convite é recusado.
+   Depende de style.css já estar carregado (mesmas variáveis de cor,
+   fontes e camadas de fundo). */
+
+.recusado-main{
+  position:relative;
+  z-index:2;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:9vh 5vw 10vh;
+  text-align:center;
+  opacity:1; /* style.css's generic `#main{opacity:0}` não afeta essa
+                página, já que esse <main> não tem id="main" — mesma
+                lógica já usada em form.css e membros.css */
+}
+
+.logo-recusado{
+  width:min(56vw, 220px);
+  margin-bottom:6px;
+  filter:drop-shadow(0 4px 0 rgba(0,0,0,0.5));
+}
+
+.recusado-body{
+  max-width:460px;
+  font-size:1.35rem;
+  line-height:1.55;
+  color:var(--ink);
+  margin:0 0 18px;
+}
+
+.recusado-form{
+  width:100%;
+  max-width:380px;
+  margin:0 auto 34px;
+  text-align:left;
+}
+.recusado-form .field{
+  margin-bottom:18px;
+}
+.recusado-form .invite-open-btn{
+  width:100%;
+  margin-top:4px;
+}

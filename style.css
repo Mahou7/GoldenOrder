@@ -347,204 +347,271 @@
       8px 8px 0 0 rgba(0,0,0,0.7);
   }
 
-  /* selo de cera no topo do bilhete — "quebra" (com uma rachadura e
-     leve encolhida) quando o bilhete é expandido, e volta ao normal
-     quando fecha (ver wireExpandable em script.js) */
-  .wax-seal{
-    position:absolute;
-    top:-18px;
-    left:50%;
-    transform:translateX(-50%) rotate(-4deg);
-    width:42px;
-    height:42px;
-    border-radius:50%;
+  /* ---------- convite: um convite fechado que revela a mensagem ao clicar ----------
+     Estado fechado: só uma linha de texto + o mesmo botão .cta usado
+     no resto do site (nada de ícone/símbolo novo pra decifrar). Estado
+     aberto: mensagem formal (Mahou como remetente + corpo + aceitar/
+     recusar), revelada com grid-template-rows 0fr -> 1fr e cada linha
+     surgindo com um leve atraso (nth-child) — o botão estoura em
+     partículas (wireInviteCard() em script.js) enquanto o texto some. */
+  .invite-card{
+    position:relative;
+    width:100%;
+    max-width:560px;
+    margin-bottom:34px;
     display:flex;
+    flex-direction:column;
+    align-items:center;
+  }
+
+  .seal-wrap{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:22px;
+    padding-bottom:8px;
+    transition:opacity 0.3s ease, transform 0.3s ease;
+  }
+  .seal-wrap.is-open{
+    opacity:0;
+    transform:scale(0.85);
+    pointer-events:none;
+  }
+
+  .invite-prompt{
+    font-size:1.3rem;
+    color:var(--ink-dim);
+    margin:0;
+  }
+
+  /* gatilho pra abrir o convite: nada de objeto/ícone novo — é o mesmo
+     tipo de prompt "aperte para continuar" que já existe na tela de
+     entrada (#intro .intro-hint), com colchetes de seleção estilo menu
+     de jogo retrô. O texto pisca (reaproveita @keyframes blinkHint),
+     os colchetes se afastam no hover, e um flash rápido (.opening,
+     ligado em script.js) dá o feedback de clique antes de sumir.
+
+     Essa mesma classe (.invite-open-btn) é reaproveitada tal e qual nos
+     botões Aceitar/Recusar do convite e no de confirmar recusa — só o
+     texto muda, o visual é idêntico em todos, por pedido explícito
+     (nenhum botão deve parecer "mais importante" que o outro). */
+  .invite-open-btn{
+    display:inline-flex;
     align-items:center;
     justify-content:center;
-    background:radial-gradient(circle at 35% 30%, var(--gold-1), var(--gold-3) 55%, var(--gold-5) 100%);
-    border:3px solid #000;
+    gap:12px;
+    background:transparent;
+    border:2px solid var(--gold-5);
+    padding:12px 18px;
+    cursor:pointer;
+    text-decoration:none;
     font-family:'Press Start 2P', monospace;
-    font-size:0.65rem;
-    color:#241704;
-    box-shadow:2px 2px 0 0 rgba(0,0,0,0.6);
-    z-index:2;
-    pointer-events:none;
-    transition:transform 0.3s ease;
+    box-shadow:
+      inset 2px 2px 0 0 rgba(255,246,201,0.08),
+      inset -2px -2px 0 0 rgba(0,0,0,0.5);
+    transition:transform 0.08s steps(1), box-shadow 0.08s steps(1), border-color 0.15s ease;
   }
-  .wax-seal::after{
+  .invite-open-btn:hover{
+    border-color:var(--gold-3);
+  }
+  .invite-open-btn:active{
+    transform:translate(3px,3px);
+  }
+  .invite-open-btn:disabled{
+    opacity:0.6;
+    cursor:default;
+  }
+  .invite-open-label{
+    font-size:0.85rem;
+    letter-spacing:0.08em;
+    word-spacing:0.5em;
+    white-space:nowrap;
+    text-transform:uppercase;
+    color:var(--gold-2);
+    text-shadow:0 0 14px rgba(255,207,63,0.55);
+    animation:blinkHint 1.4s steps(1) infinite;
+  }
+  .invite-open-bracket{
+    font-size:1.2rem;
+    color:var(--gold-3);
+    transition:transform 0.15s ease;
+  }
+  /* !important em vez de "animation:none": isso força a visibilidade
+     sem interromper/reiniciar o relógio da animação por baixo — se ela
+     fosse reiniciada a cada hover, Aceitar e Recusar saíam de sincronia
+     (um piscando enquanto o outro fica sólido). Assim os dois piscam
+     sempre juntos, não importa o histórico de hover de cada um. */
+  .invite-open-btn:hover .invite-open-label{
+    visibility:visible !important;
+  }
+  .invite-open-btn:hover .invite-open-bracket-l{ transform:translateX(-6px); }
+  .invite-open-btn:hover .invite-open-bracket-r{ transform:translateX(6px); }
+
+  @keyframes openFlash{
+    0%{ transform:scale(1); filter:brightness(1); }
+    35%{ transform:scale(1.12); filter:brightness(1.8); }
+    100%{ transform:scale(1); filter:brightness(1); }
+  }
+  .invite-open-btn.opening{
+    animation:openFlash 0.3s ease-out;
+  }
+
+  /* estouro de partículas ao abrir, criado dinamicamente em script.js */
+  .seal-burst-particle{
+    position:fixed;
+    z-index:45;
+    width:6px;
+    height:6px;
+    background:var(--gold-2);
+    box-shadow:0 0 0 1px rgba(0,0,0,0.6);
+    pointer-events:none;
+    transform:translate(-50%,-50%);
+    animation:sealBurst 0.6s ease-out forwards;
+  }
+  @keyframes sealBurst{
+    0%{ transform:translate(-50%,-50%) translate(0,0) scale(1); opacity:1; }
+    100%{ transform:translate(-50%,-50%) translate(var(--tx), var(--ty)) scale(0.3); opacity:0; }
+  }
+
+  .card-reveal{
+    display:grid;
+    grid-template-rows:0fr;
+    width:100%;
+    transition:grid-template-rows 0.5s ease;
+  }
+  .card-reveal.open{
+    grid-template-rows:1fr;
+  }
+  .card-reveal-inner{
+    overflow:hidden;
+    min-height:0;
+  }
+
+  .card-open{
+    position:relative;
+    isolation:isolate;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding-top:10px;
+    text-align:center;
+  }
+  /* marca d'água sutil da ave atrás do texto, pra dar profundidade sem
+     competir com a leitura — some de propósito por trás de tudo (z-index
+     negativo dentro do isolation:isolate acima) */
+  .card-open::before{
     content:'';
     position:absolute;
-    inset:0;
-    border-radius:50%;
-    background:linear-gradient(115deg, transparent 46%, rgba(0,0,0,0.6) 49%, rgba(0,0,0,0.6) 51%, transparent 54%);
-    opacity:0;
-    transition:opacity 0.3s ease;
+    z-index:-1;
+    top:48%;
+    left:50%;
+    width:min(480px, 130vw);
+    height:min(480px, 130vw);
+    transform:translate(-50%,-50%);
+    background:url('assets/bird-icon.png') center/contain no-repeat;
+    opacity:0.05;
+    pointer-events:none;
   }
-  .wax-seal.cracked{ transform:translateX(-50%) rotate(-4deg) scale(0.9); }
-  .wax-seal.cracked::after{ opacity:1; }
+  /* cada linha do convite revelado surge com um pequeno atraso, em vez
+     de aparecer tudo de uma vez — reforça a sensação de "abrir uma carta" */
+  .card-open > *{
+    opacity:0;
+    transform:translateY(12px);
+    transition:opacity 0.45s ease, transform 0.45s ease;
+  }
+  .card-reveal.open .card-open > *{
+    opacity:1;
+    transform:translateY(0);
+  }
+  .card-open > *:nth-child(1){ transition-delay:0.05s; }
+  .card-open > *:nth-child(2){ transition-delay:0.13s; }
+  .card-open > *:nth-child(3){ transition-delay:0.21s; }
+  .card-open > *:nth-child(4){ transition-delay:0.29s; }
+  .card-open > *:nth-child(5){ transition-delay:0.37s; }
+  .card-open > *:nth-child(6){ transition-delay:0.45s; }
+  .card-open > *:nth-child(7){ transition-delay:0.53s; }
 
-  /* nome de quem recebeu o convite, só aparece com ?para=Nome na URL */
-  .ticket-recipient{
-    display:inline-block;
+  .card-from-label{
     font-family:'Press Start 2P', monospace;
     font-size:0.5rem;
-    letter-spacing:0.03em;
+    letter-spacing:0.15em;
     text-transform:uppercase;
-    color:var(--gold-1);
-    background:var(--gold-5);
-    border:2px dashed var(--gold-3);
-    padding:6px 10px;
-    margin:0 0 16px;
+    color:var(--gold-4);
+    margin:0 0 6px;
   }
-  .ticket-recipient[hidden]{ display:none; }
-
-  .ticket-top{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    margin-bottom:14px;
-    flex-wrap:wrap;
-    gap:8px;
+  .card-sender{
+    font-family:'Press Start 2P', monospace;
+    font-size:1.4rem;
+    letter-spacing:0.04em;
+    margin:0 0 8px;
+    background:linear-gradient(180deg, var(--gold-1) 0%, var(--gold-2) 55%, var(--gold-3) 100%);
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+    filter:drop-shadow(2px 2px 0 rgba(0,0,0,0.65));
   }
-  .ticket-label{
+  .card-sender-role{
     font-family:'Press Start 2P', monospace;
     font-size:0.55rem;
     letter-spacing:0.08em;
     text-transform:uppercase;
-    color:var(--gold-2);
-    background:var(--gold-5);
-    padding:5px 8px;
-    border:2px solid #000;
-  }
-  .ticket-serial{
-    font-family:'Press Start 2P', monospace;
-    font-size:0.5rem;
-    letter-spacing:0.05em;
     color:var(--ink-dim);
+    margin:0 0 22px;
   }
-
-  .ticket h2{
-    font-family:'Press Start 2P', monospace;
-    font-size:0.95rem;
-    line-height:1.6;
-    letter-spacing:0.02em;
+  .rule-sm{
+    width:min(160px, 40vw);
+    margin:0 0 24px;
+  }
+  .ticket-recipient{
     color:var(--gold-1);
-    margin:0 0 12px;
+    border-bottom:2px dashed var(--gold-3);
+    padding:0 2px;
   }
-
-  .ticket p{
-    font-size:1.4rem;
-    line-height:1.45;
+  .card-body{
+    max-width:460px;
+    font-size:1.35rem;
+    line-height:1.55;
     color:var(--ink);
     margin:0 0 18px;
   }
-
-  .teaser{
-    margin:0 !important;
-    color:var(--gold-3) !important;
-    font-style:italic;
-  }
-
-  /* perforated seam with punch-hole notches, like a real ticket stub */
-  .perf-row{
-    position:relative;
-    margin:20px -26px;
-    padding:0 26px;
-  }
-  .perf-row::before, .perf-row::after{
-    content:'';
-    position:absolute;
-    top:50%;
-    width:22px;
-    height:22px;
-    border-radius:50%;
-    background:var(--bg-0);
-    box-shadow:0 0 0 3px #000, 0 0 0 4px var(--gold-4) inset;
-    transform:translateY(-50%);
-  }
-  .perf-row::before{ left:-11px; }
-  .perf-row::after{ right:-11px; }
-  .perf{
-    border:none;
-    border-top:3px dashed var(--gold-4);
-    margin:0;
-    opacity:0.6;
-  }
-
-  /* expand/collapse toggle ("pull tab") */
-  .ticket-toggle{
-    position:relative;
-    overflow:hidden;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:10px;
-    width:100%;
-    padding:11px 10px;
-    background:var(--bg-1);
-    border:3px solid #000;
+  .card-question{
     color:var(--gold-2);
-    font-family:'Press Start 2P', monospace;
-    font-size:0.55rem;
-    letter-spacing:0.04em;
-    text-transform:uppercase;
-    cursor:pointer;
-    box-shadow:
-      inset 2px 2px 0 0 rgba(255,246,201,0.15),
-      inset -2px -2px 0 0 rgba(0,0,0,0.5);
-    transition:color 0.15s ease, background 0.15s ease;
+    font-size:1.3rem;
+    margin-bottom:26px;
   }
-  .ticket-toggle:hover{ color:var(--gold-1); background:#211830; }
-  .ticket-toggle .chevron{
-    display:inline-block;
-    transition:transform 0.25s ease;
-  }
-  .ticket-toggle[aria-expanded="true"] .chevron{ transform:rotate(180deg); }
-
-  /* smooth height animation without JS measuring (grid-rows trick) */
-  .ticket-expand-wrap{
-    display:grid;
-    grid-template-rows:0fr;
-    transition:grid-template-rows 0.4s ease;
-  }
-  .ticket-expand-wrap.open{ grid-template-rows:1fr; }
-  .ticket-expand-inner{
-    overflow:hidden;
-    min-height:0;
-  }
-  .ticket-expand-inner > p{
-    margin:20px 0 18px;
-  }
-
-  .ticket-meta{
+  .card-actions{
     display:flex;
-    justify-content:space-between;
-    gap:12px;
     flex-wrap:wrap;
-    font-family:'Press Start 2P', monospace;
-    font-size:0.5rem;
-    letter-spacing:0.03em;
-    text-transform:uppercase;
-    color:var(--ink-dim);
-  }
-  .ticket-meta b{
-    display:block;
-    color:var(--gold-2);
-    font-size:0.6rem;
-    letter-spacing:0.02em;
-    margin-top:6px;
-    line-height:1.5;
-  }
-
-  /* ---------- CTA ---------- */
-  .cta-wrap{
-    margin-top:36px;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
+    justify-content:center;
     gap:16px;
   }
 
+  .cta-outline{
+    display:inline-block;
+    font-family:'Press Start 2P', monospace;
+    font-size:0.75rem;
+    letter-spacing:0.03em;
+    text-transform:uppercase;
+    text-decoration:none;
+    color:var(--ink-dim);
+    background:var(--bg-1);
+    border:4px solid var(--gold-5);
+    padding:16px 30px;
+    cursor:pointer;
+    box-shadow:
+      inset 2px 2px 0 0 rgba(255,246,201,0.08),
+      inset -2px -2px 0 0 rgba(0,0,0,0.5);
+    transition:transform 0.08s steps(1), box-shadow 0.08s steps(1), border-color 0.15s ease, color 0.15s ease;
+  }
+  .cta-outline:hover{
+    border-color:var(--gold-3);
+    color:var(--gold-2);
+  }
+  .cta-outline:active{
+    transform:translate(3px,3px);
+  }
+
+  /* ---------- CTA ---------- */
   .cta{
     display:inline-block;
     font-family:'Press Start 2P', monospace;
@@ -566,7 +633,7 @@
     transition:transform 0.08s steps(1), box-shadow 0.08s steps(1);
   }
   /* brilho que desliza pelo botão no hover, tipo item raro de jogo */
-  .cta::before, .ticket-toggle::before{
+  .cta::before{
     content:'';
     position:absolute;
     top:0;
@@ -578,7 +645,7 @@
     transition:left 0.5s ease;
     pointer-events:none;
   }
-  .cta:hover::before, .ticket-toggle:hover::before{ left:130%; }
+  .cta:hover::before{ left:130%; }
   .cta:hover{
     transform:translate(2px,2px);
     box-shadow:
@@ -594,14 +661,12 @@
       0 0 0 0 rgba(0,0,0,0.7);
   }
 
-  .cta-note{
-    font-size:1.1rem;
-    color:var(--ink-dim);
-    letter-spacing:0.02em;
-  }
-
   footer{
-    margin-top:52px;
+    margin-top:40px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:14px;
     font-family:'Press Start 2P', monospace;
     font-size:0.5rem;
     letter-spacing:0.06em;
@@ -609,6 +674,7 @@
     color:var(--gold-5);
     line-height:1.8;
   }
+  .footer-tagline{ margin:0; }
 
   /* ---------- modal (placeholder for future questionnaire) ---------- */
   #modal-overlay{
@@ -671,46 +737,17 @@
     color:var(--gold-1);
   }
 
-  /* ---------- requirement chips ---------- */
-  .req-chips{
-    display:flex;
-    flex-wrap:wrap;
-    gap:8px;
-    margin-top:16px;
-  }
-  .req-chip{
-    font-family:'Press Start 2P', monospace;
-    font-size:0.46rem;
-    letter-spacing:0.03em;
-    text-transform:uppercase;
-    color:var(--ink-dim);
-    background:var(--bg-1);
-    border:2px solid var(--gold-5);
-    padding:6px 8px;
-    line-height:1.4;
-  }
-
-  /* ---------- secondary CTA (Discord) ---------- */
-  .cta-secondary{
-    background:var(--bg-1);
-    color:var(--gold-2);
-    box-shadow:
-      inset 2px 2px 0 0 rgba(255,246,201,0.12),
-      inset -2px -2px 0 0 rgba(0,0,0,0.5),
-      6px 6px 0 0 rgba(0,0,0,0.7);
-  }
-  .cta-secondary:hover{ color:var(--gold-1); }
-
-  /* ---------- server status pill ---------- */
+  /* ---------- server status ----------
+     Vive no rodapé agora (não mais no meio do convite): só um ponto +
+     texto discretos, sem caixa/borda, pra não competir com a mensagem. */
   .server-status{
     display:inline-flex;
     align-items:center;
-    gap:9px;
-    margin:2px 0 22px;
-    padding:8px 14px;
-    background:var(--bg-1);
-    border:2px solid var(--gold-5);
-    font-size:1rem;
+    gap:8px;
+    font-family:'VT323', monospace;
+    font-size:0.95rem;
+    letter-spacing:0;
+    text-transform:none;
     color:var(--ink-dim);
   }
   .status-dot{
@@ -735,138 +772,17 @@
     50%{ opacity:0.45; }
   }
 
-  /* ---------- two-column layout (invite + rules side by side on
-     wide screens, so the extra horizontal space actually gets used
-     instead of leaving big empty margins on either side) ---------- */
-  .panels{
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    gap:26px;
-    width:100%;
-    max-width:1100px;
-  }
-  .panel{
-    width:100%;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-  }
-  .panel .ticket{ width:100%; max-width:520px; }
-  @media (min-width:900px){
-    .panels{
-      flex-direction:row;
-      align-items:flex-start;
-      justify-content:center;
-      gap:36px;
-    }
-    .panel{ flex:1 1 0; }
-  }
-
-  /* ---------- rules list ---------- */
-  .rules-list{
-    margin:20px 0 0;
-    padding-left:1.4em;
-    color:var(--ink);
-    font-size:1.25rem;
-    line-height:1.6;
-  }
-  .rules-list li{ margin-bottom:10px; }
-  .rules-list li::marker{
-    color:var(--gold-3);
-    font-family:'Press Start 2P', monospace;
-    font-size:0.7rem;
-  }
-
-  /* ---------- chamada pra árvore de membros ---------- */
-  .tree-cta{
-    width:min(700px, 94vw);
-    margin-top:48px;
-    text-align:center;
-  }
-  .tree-cta-text{
-    margin:8px auto 20px;
-    max-width:520px;
-    font-size:1.15rem;
-    line-height:1.5;
-    color:var(--ink-dim);
-  }
-
-  /* ---------- quem somos ---------- */
-  .team{
-    width:min(1100px, 94vw);
-    margin-top:48px;
-    text-align:center;
-  }
-  .team-grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));
-    gap:16px;
-    margin-top:8px;
-  }
-  .team-card{
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    gap:10px;
-    padding:24px 16px;
-    background:var(--bg-1);
-    border:3px solid #000;
-    box-shadow:
-      inset 2px 2px 0 0 rgba(255,246,201,0.12),
-      inset -2px -2px 0 0 rgba(0,0,0,0.5);
-  }
-  .team-avatar{
-    width:56px;
-    height:56px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    background:linear-gradient(180deg, var(--gold-2), var(--gold-4));
-    color:#241704;
-    font-family:'Press Start 2P', monospace;
-    font-size:1.1rem;
-    border:3px solid #000;
-  }
-  .team-avatar img{ width:100%; height:100%; object-fit:cover; }
-  .team-name{
-    margin:0;
-    font-size:1.15rem;
-    color:var(--ink);
-  }
-  .team-role{
-    margin:0;
-    font-family:'Press Start 2P', monospace;
-    font-size:0.5rem;
-    letter-spacing:0.05em;
-    text-transform:uppercase;
-    color:var(--gold-3);
-  }
-
-  /* ---------- cta flutuante ---------- */
-  .floating-cta{
-    position:fixed;
-    right:20px;
-    bottom:20px;
-    z-index:40;
-    padding:12px 20px;
-    font-size:0.65rem;
-    opacity:0;
-    transform:translateY(14px);
-    pointer-events:none;
-    transition:opacity 0.25s ease, transform 0.25s ease;
-  }
-  .floating-cta.show{
-    opacity:1;
-    transform:translateY(0);
-    pointer-events:auto;
-  }
-
   @media (max-width:480px){
     .ticket{ padding:24px 18px 20px; }
-    .ticket-meta{ flex-direction:column; gap:12px; }
     .cta{ font-size:0.65rem; padding:14px 20px; }
-    .floating-cta{ right:14px; bottom:14px; padding:10px 16px; font-size:0.58rem; }
+    .cta-outline{ font-size:0.65rem; padding:14px 20px; }
+    .invite-open-btn{ padding:10px 14px; gap:8px; }
+    .invite-open-label{ font-size:0.7rem; }
+    .invite-open-bracket{ font-size:1rem; }
+    .card-sender{ font-size:1.15rem; }
+    .card-open::before{ width:min(340px, 150vw); height:min(340px, 150vw); }
+    .card-actions{ flex-direction:column; width:100%; }
+    .card-actions .invite-open-btn{ width:100%; }
   }
 
   /* ---------- prefers-reduced-motion ---------- */
@@ -880,7 +796,10 @@
     .intro-loading{ animation:none; opacity:1; }
     .intro-loading-bar{ animation:none; width:100%; }
     .intro-hint{ animation:none; opacity:1; }
+    .invite-open-label{ animation:none; visibility:visible; }
     .scroll-reveal{ opacity:1 !important; transform:none !important; }
+    .card-open > *{ opacity:1 !important; transform:none !important; transition-delay:0s !important; }
+    .seal-burst-particle{ display:none; }
     *, *::before, *::after{
       animation-duration:0.01ms !important;
       animation-iteration-count:1 !important;

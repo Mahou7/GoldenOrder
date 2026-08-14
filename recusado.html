@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Golden Order — Até uma Próxima</title>
+<meta name="theme-color" content="#e8a413">
+<meta name="robots" content="noindex">
+
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="form.css">
+<link rel="stylesheet" href="recusado.css">
+</head>
+<body>
+
+<div class="bg-fixed"></div>
+<div id="particles"></div>
+<div class="vignette"></div>
+<div class="scanlines"></div>
+
+<main class="recusado-main">
+  <img class="logo-recusado" src="assets/logo.png" alt="Golden Order">
+  <p class="kicker">Até uma Próxima</p>
+
+  <div class="rule"><span class="blk"></span><span class="diamond"></span><span class="blk"></span></div>
+
+  <!-- Passo 1: só depois que a pessoa confirma com o nick é que o aviso
+       vai pro Discord (ver recusado.js) — chegar nesta página sozinho
+       não conta como recusa. -->
+  <div id="recusadoStep1">
+    <p class="recusado-body">Antes de ir, deixe seu nick no jogo — é só pra Golden Order saber quem passou por aqui.</p>
+    <form class="recusado-form" id="recusadoForm" novalidate>
+      <div class="field">
+        <label for="fNickRecusa">Nick no jogo</label>
+        <input type="text" id="fNickRecusa" name="nick" required maxlength="30" autocomplete="off">
+      </div>
+      <button type="submit" class="invite-open-btn" id="confirmRecusaBtn">
+        <span class="invite-open-bracket invite-open-bracket-l" aria-hidden="true">▸</span>
+        <span class="invite-open-label">Confirmar Recusa</span>
+        <span class="invite-open-bracket invite-open-bracket-r" aria-hidden="true">◂</span>
+      </button>
+    </form>
+  </div>
+
+  <div id="recusadoStep2" hidden>
+    <p class="recusado-body">Tudo bem. Obrigado pelo tempo que dedicou a este convite — ele foi feito a dedo, pensando em você, e sua resposta é totalmente respeitada.</p>
+    <p class="recusado-body">Se um dia mudar de ideia, a porta da Golden Order continua aberta.</p>
+  </div>
+
+  <div class="rule"><span class="blk"></span><span class="diamond"></span><span class="blk"></span></div>
+
+  <footer>Golden Order · Feito para um, não para todos</footer>
+</main>
+
+<script src="recusado.js"></script>
+
+</body>
+</html>

@@ -1,21 +1,30 @@
 /* Golden Order — formulário de ingresso.
    ============================================================
-   CONFIGURAÇÃO: escolha UM dos dois modos de envio abaixo.
+   CONFIGURAÇÃO — Webhook do Discord (é só isso que falta pra cada
+   resposta do questionário cair de verdade, automaticamente, num
+   canal do seu servidor):
 
-   OPÇÃO A — Webhook do Discord (recomendado, já que o "portão" é
-   o Discord do clã):
-     1. No canal onde as candidaturas devem cair, vá em
-        Configurações do Canal > Integrações > Webhooks > Novo Webhook.
-     2. Copie a "URL do Webhook" e cole abaixo em discordWebhookUrl.
-     Pronto — o formulário passa a enviar direto pro canal.
+     1. No Discord, entre no canal onde as respostas devem chegar
+        (pode ser um canal privado, só a staff vê).
+     2. Configurações do Canal (a engrenagem) > Integrações > Webhooks
+        > Novo Webhook.
+     3. Dê um nome a ele (ex.: "Convites Golden Order"), clique em
+        "Copiar URL do Webhook".
+     4. Cole essa URL abaixo, entre as aspas de discordWebhookUrl.
 
-   OPÇÃO B — E-mail (funciona sem nenhuma configuração de servidor):
-     Deixe discordWebhookUrl vazio e troque fallbackEmail pelo seu
-     e-mail. O formulário abre o app de e-mail do usuário com tudo
-     preenchido — ele só precisa clicar em "enviar".
+   Depois de colar a URL, salve o arquivo e é isso — está funcionando.
+   Cada envio do formulário vira uma mensagem nesse canal, com todos
+   os campos organizados. As mensagens ficam salvas no histórico do
+   canal como qualquer outra, então dá pra rolar, buscar ou fixar as
+   que quiser revisar depois.
+
+   Sem essa URL preenchida, o formulário cai automaticamente no modo
+   de segurança: abre o e-mail do usuário com tudo preenchido, pra
+   garantir que nenhuma resposta se perca enquanto o webhook não é
+   configurado.
    ============================================================ */
 const CONFIG = {
-  discordWebhookUrl: '', // ex: 'https://discord.com/api/webhooks/xxxx/yyyy'
+  discordWebhookUrl: 'https://discord.com/api/webhooks/1537605741245112440/xxUxl4x-vOA--44Az7Q3q-3hJKXSeIGb---qtt1VB47RFeTR4PLhyx2kxmkRnZv5ueLH',
   fallbackEmail: 'SEU_EMAIL_AQUI@exemplo.com'
 };
 
@@ -33,14 +42,11 @@ const CONFIG = {
 
   function fieldLabel(name) {
     const map = {
-      nome: 'Nome/Apelido',
-      nick_minecraft: 'Nick no Minecraft',
       idade: 'Idade',
+      nick_minecraft: 'Nick no jogo',
+      nome: 'Nome',
       discord: 'Discord',
-      tempo_de_jogo: 'Tempo de jogo',
-      disponibilidade: 'Disponibilidade',
-      motivo: 'Motivo',
-      como_conheceu: 'Como conheceu o clã'
+      sobre_voce: 'Sobre'
     };
     return map[name] || name;
   }
@@ -49,17 +55,13 @@ const CONFIG = {
     const fd = new FormData(form);
     const data = {};
     for (const [key, value] of fd.entries()) {
-      if (key === 'disponibilidade') {
-        data[key] = data[key] ? data[key] + ', ' + value : value;
-      } else {
-        data[key] = value;
-      }
+      data[key] = value;
     }
     return data;
   }
 
   function buildSummary(data) {
-    const order = ['nome', 'nick_minecraft', 'idade', 'discord', 'tempo_de_jogo', 'disponibilidade', 'motivo', 'como_conheceu'];
+    const order = ['idade', 'nick_minecraft', 'nome', 'discord', 'sobre_voce'];
     return order
       .filter((k) => data[k])
       .map((k) => `${fieldLabel(k)}: ${data[k]}`)
@@ -100,14 +102,11 @@ const CONFIG = {
         title: 'Convite confirmado',
         color: 15258402, // dourado
         fields: [
-          { name: 'Nome/Apelido', value: data.nome || '—', inline: true },
-          { name: 'Nick Minecraft', value: data.nick_minecraft || '—', inline: true },
           { name: 'Idade', value: data.idade || '—', inline: true },
+          { name: 'Nick no jogo', value: data.nick_minecraft || '—', inline: true },
+          { name: 'Nome', value: data.nome || '—', inline: true },
           { name: 'Discord', value: data.discord || '—', inline: true },
-          { name: 'Tempo de jogo', value: data.tempo_de_jogo || '—', inline: true },
-          { name: 'Disponibilidade', value: data.disponibilidade || '—', inline: false },
-          { name: 'Motivo', value: (data.motivo || '—').slice(0, 1000), inline: false },
-          { name: 'Como conheceu o clã', value: data.como_conheceu || '—', inline: false }
+          { name: 'Sobre', value: (data.sobre_voce || '—').slice(0, 1000), inline: false }
         ]
       }]
     };

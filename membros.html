@@ -31,59 +31,82 @@
   <img class="logo-tree" src="assets/logo.png" alt="Golden Order">
   <p class="kicker">A Árvore da Ordem</p>
 
-  <!-- Árvore genealógica em HTML/CSS puro (sem JavaScript).
-       Cada pessoa é um <li> com um .tree-node dentro. Pra adicionar
-       alguém no mesmo nível de outra pessoa, copie o <li> dela inteiro
-       (incluindo a </li> de fechamento) e troque o nome/cargo. Pra dar
-       a alguém um cargo abaixo dela (subordinados), coloque um novo
-       <ul>...</ul> dentro do <li> dessa pessoa, do mesmo jeito que o
-       Moderador abaixo tem os "Membros" dependurados nele. -->
-  <div class="tree-scroll">
-    <ul class="org-tree">
-      <li>
-        <div class="tree-node tree-node-root">
-          <span class="tree-avatar">F</span>
-          <p class="tree-name">Nome do Fundador</p>
-          <p class="tree-role">Fundador</p>
-        </div>
-        <ul>
-          <li>
-            <div class="tree-node">
-              <span class="tree-avatar">C</span>
-              <p class="tree-name">Nome do Co-fundador</p>
-              <p class="tree-role">Co-fundador</p>
-            </div>
-          </li>
-          <li>
-            <div class="tree-node">
-              <span class="tree-avatar">M</span>
-              <p class="tree-name">Nome do Moderador</p>
-              <p class="tree-role">Moderador</p>
-            </div>
-            <ul>
-              <li>
-                <div class="tree-node tree-node-member">
-                  <p class="tree-name">Membro</p>
-                </div>
-              </li>
-              <li>
-                <div class="tree-node tree-node-member">
-                  <p class="tree-name">Membro</p>
-                </div>
-              </li>
-              <li>
-                <div class="tree-node tree-node-member">
-                  <p class="tree-name">Membro</p>
-                </div>
-              </li>
-            </ul>
-          </li>
-        </ul>
-      </li>
-    </ul>
+  <!-- Hierarquia da Golden Order em HTML/CSS puro (sem JavaScript).
+       Cada .rank-tier é um cargo, do mais alto pro mais baixo, com
+       todo mundo daquele cargo dentro de .rank-members. Pra adicionar
+       alguém, copie um <span class="member-chip">Nome</span> dentro do
+       cargo certo. Pra criar um cargo novo, copie um <div class="rank-tier">
+       inteiro e coloque na posição certa da hierarquia (a ordem no HTML
+       é a ordem visual, de cima pra baixo). Cargos sem ninguém ainda
+       mostram um aviso tracejado — é só trocar pelos chips reais
+       quando alguém assumir o posto. -->
+  <div class="rank-ladder">
+    <div class="rank-tier">
+      <p class="rank-label">Líder</p>
+      <div class="rank-members">
+        <span class="member-chip member-chip-lead">Mahou</span>
+      </div>
+    </div>
+
+    <div class="rank-tier">
+      <p class="rank-label">Co-líder</p>
+      <div class="rank-members">
+        <span class="member-chip member-chip-lead">Radyzinn</span>
+        <span class="member-chip member-chip-lead">Gatti</span>
+      </div>
+    </div>
+
+    <div class="rank-tier">
+      <p class="rank-label">Artífice Mestre</p>
+      <div class="rank-members">
+        <span class="member-chip">Rik_001</span>
+      </div>
+    </div>
+
+    <div class="rank-tier">
+      <p class="rank-label">Artífice</p>
+      <div class="rank-members">
+        <span class="member-chip member-chip-empty">Nenhum membro nesse cargo ainda</span>
+      </div>
+    </div>
+
+    <div class="rank-tier">
+      <p class="rank-label">Grão Mestre</p>
+      <div class="rank-members">
+        <span class="member-chip">Nisaka</span>
+      </div>
+    </div>
+
+    <div class="rank-tier">
+      <p class="rank-label">Consagrado</p>
+      <div class="rank-members">
+        <span class="member-chip">Andy</span>
+      </div>
+    </div>
+
+    <div class="rank-tier">
+      <p class="rank-label">Juramentado</p>
+      <div class="rank-members">
+        <span class="member-chip">Hyper</span>
+        <span class="member-chip">Sandryzz</span>
+        <span class="member-chip">Xamineh</span>
+        <span class="member-chip">Doge</span>
+        <span class="member-chip">Natanpis8</span>
+      </div>
+    </div>
+
+    <div class="rank-tier">
+      <p class="rank-label">Recruta</p>
+      <div class="rank-members">
+        <span class="member-chip">Tinylung</span>
+        <span class="member-chip">Atlas</span>
+        <span class="member-chip">Musashi</span>
+        <span class="member-chip">Miwendo</span>
+      </div>
+    </div>
   </div>
 
-  <p class="tree-note">Essa é a estrutura da Golden Order — da fundação até quem entrou por último.</p>
+  <p class="tree-note">Essa é a estrutura da Golden Order — da liderança até quem entrou por último.</p>
 </main>
 
 </body>

@@ -37,36 +37,76 @@
     if (e.key === 'Enter' || e.key === ' ') revealMain();
   });
 
-  // --- painéis expansíveis (bilhete de convite + regras) ---
-  // mesmo padrão dos dois: um botão com aria-expanded controla um
-  // wrapper que anima de altura 0 até o conteúdo (ver .ticket-expand-wrap
-  // no style.css), então centralizei a lógica aqui pra não repetir código.
-  // sealId é opcional: quando informado, o selo de cera correspondente
-  // "quebra" (classe .cracked) junto com a abertura do bilhete
-  function wireExpandable(toggleId, expandId, openLabel, closedLabel, sealId) {
-    const toggle = document.getElementById(toggleId);
-    const expand = document.getElementById(expandId);
-    const seal = sealId ? document.getElementById(sealId) : null;
-    if (!toggle || !expand) return;
-    toggle.addEventListener('click', () => {
-      const isOpen = expand.classList.toggle('open');
-      toggle.setAttribute('aria-expanded', String(isOpen));
-      toggle.querySelector('.toggle-text').textContent = isOpen ? openLabel : closedLabel;
-      if (seal) seal.classList.toggle('cracked', isOpen);
-    });
-  }
-  wireExpandable('ticketToggle', 'ticketExpand', 'Fechar', 'Ver o convite completo', 'inviteSeal');
-  wireExpandable('rulesToggle', 'rulesExpand', 'Fechar', 'Ver as regras', 'rulesSeal');
-
-  // --- personalização: ?para=Nome na URL mostra pra quem é o convite ---
+  // --- personalização: ?para=Nome na URL troca "você" pelo nome de
+  // quem recebeu o convite, direto na frase do bilhete ---
   (function personalizeInvite() {
     const params = new URLSearchParams(window.location.search);
     const name = (params.get('para') || '').trim().slice(0, 40);
     const recipient = document.getElementById('ticketRecipient');
     if (name && recipient) {
-      recipient.textContent = 'Este convite pertence a: ' + name;
-      recipient.hidden = false;
+      recipient.textContent = name;
     }
+  })();
+
+  // --- propaga o ?para=Nome pros links de aceitar/recusar, pra que
+  // recusado.html (que avisa no Discord quando alguém recusa) saiba
+  // quem foi — sem parâmetro, os links continuam funcionando normal ---
+  (function propagateRecipientParam() {
+    const params = new URLSearchParams(window.location.search);
+    const name = params.get('para');
+    if (!name) return;
+    document.querySelectorAll('.card-actions a').forEach((link) => {
+      const url = new URL(link.getAttribute('href'), window.location.href);
+      url.searchParams.set('para', name);
+      link.setAttribute('href', url.pathname + url.search);
+    });
+  })();
+
+  // --- convite: o gatilho de abrir é um prompt "aperte para continuar"
+  // (não um objeto/ícone) que dá um flash rápido (.opening), estoura
+  // num punhado de partículas douradas e some com um fade, enquanto o
+  // texto surge linha a linha logo abaixo. ---
+  (function wireInviteCard() {
+    const cardClosed = document.getElementById('cardClosed');
+    const cardReveal = document.getElementById('cardReveal');
+    const sealWrap = document.getElementById('sealWrap');
+    if (!cardClosed || !cardReveal || !sealWrap) return;
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function spawnSealBurst() {
+      if (prefersReducedMotion) return;
+      const rect = cardClosed.getBoundingClientRect();
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+      const COUNT = 16;
+      for (let i = 0; i < COUNT; i++) {
+        const angle = (Math.PI * 2 * i) / COUNT + (Math.random() * 0.4 - 0.2);
+        const dist = 60 + Math.random() * 70;
+        const p = document.createElement('span');
+        p.className = 'seal-burst-particle';
+        p.style.left = cx + 'px';
+        p.style.top = cy + 'px';
+        p.style.setProperty('--tx', Math.cos(angle) * dist + 'px');
+        p.style.setProperty('--ty', Math.sin(angle) * dist + 'px');
+        p.style.animationDelay = (Math.random() * 0.05) + 's';
+        document.body.appendChild(p);
+        p.addEventListener('animationend', () => p.remove());
+      }
+    }
+
+    cardClosed.addEventListener('click', () => {
+      cardClosed.classList.add('opening');
+      spawnSealBurst();
+      cardReveal.classList.add('open');
+      cardClosed.setAttribute('aria-expanded', 'true');
+      sealWrap.classList.add('is-open');
+      // só tira o selo do fluxo (display:none) depois do fade terminar,
+      // senão o texto revelado "pula" pro lugar em vez de crescer suave
+      window.setTimeout(() => {
+        sealWrap.style.display = 'none';
+      }, prefersReducedMotion ? 0 : 320);
+    });
   })();
 
   // --- status do servidor (definido manualmente, sem consultar nada) ---
@@ -102,17 +142,4 @@
       });
     }, { threshold: 0.15 });
     revealTargets.forEach((el) => revealObserver.observe(el));
-  }
-
-  // --- CTA flutuante: aparece quando o CTA original sai da tela ---
-  // (e só depois que a intro foi dispensada, pra não aparecer flutuando
-  // por cima da tela de entrada)
-  const floatingCta = document.getElementById('floatingCta');
-  const ctaWrap = document.querySelector('.cta-wrap');
-  if (floatingCta && ctaWrap && 'IntersectionObserver' in window) {
-    const ctaObserver = new IntersectionObserver((entries) => {
-      const entry = entries[0];
-      floatingCta.classList.toggle('show', revealed && !entry.isIntersecting);
-    }, { threshold: 0 });
-    ctaObserver.observe(ctaWrap);
   }

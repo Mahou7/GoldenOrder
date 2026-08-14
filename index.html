@@ -6,6 +6,9 @@
 <title>Golden Order — Convite</title>
 <meta name="description" content="A Golden Order é um clã de Minecraft inspirado em Elden Ring. Um convite exclusivo, para poucos escolhidos a dedo.">
 <meta name="theme-color" content="#e8a413">
+<!-- noindex: esse link não é pra ser encontrado por busca nem
+     divulgado publicamente, só enviado direto pra quem foi convidado -->
+<meta name="robots" content="noindex">
 
 <link rel="icon" type="image/x-icon" href="favicon.ico">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
@@ -72,146 +75,65 @@
   <img class="logo-main" src="assets/logo.png" alt="Golden Order">
   <p class="kicker">Inspirado em Elden Ring, construído em blocos</p>
 
-  <!-- Status do servidor: definido manualmente em script.js (procure
-       por SERVER_STATUS) — sem nenhuma consulta externa -->
-  <div class="server-status" id="serverStatus">
-    <span class="status-dot" id="statusDot"></span>
-    <span id="statusText">Servidor online</span>
-  </div>
-
-  <div class="rule"><span class="blk"></span><span class="diamond"></span><span class="blk"></span></div>
-
-  <div class="panels">
-    <div class="panel">
-      <div class="ticket">
-        <span class="wax-seal" id="inviteSeal" aria-hidden="true">G</span>
-        <div class="ticket-top">
-          <span class="ticket-label">Convite Oficial</span>
-          <span class="ticket-serial">Nº 001-GO</span>
-        </div>
-        <!-- Personalização: abra o link com ?para=Nome (ex.: index.html?para=Fulano)
-             pra mostrar o nome de quem recebeu o convite aqui embaixo -->
-        <p class="ticket-recipient" id="ticketRecipient" hidden></p>
-        <h2>A GOLDEN ORDER<br>QUER VOCÊ</h2>
-        <p class="teaser">Um clã de Minecraft. Um convite para poucos.</p>
-
-        <div class="perf-row">
-          <hr class="perf">
-        </div>
-
-        <button class="ticket-toggle" id="ticketToggle" aria-expanded="false" aria-controls="ticketExpand">
-          <span class="toggle-text">Ver o convite completo</span>
-          <span class="chevron">▼</span>
-        </button>
-
-        <div class="ticket-expand-wrap" id="ticketExpand">
-          <div class="ticket-expand-inner">
-            <p>
-              Aqui o foco é construir, explorar e jogar em grupo com gente de confiança. Se você
-              valoriza comunidade séria tanto quanto um bom estoque de ouro, este é o seu convite.
-            </p>
-            <div class="ticket-meta">
-              <div>ADMITE<b>1 ALIADO(A)</b></div>
-              <div>PORTÃO<b>DISCORD</b></div>
-              <div>VALIDADE<b>ENQUANTO ATIVO NO GRUPO</b></div>
-            </div>
-            <div class="req-chips">
-              <span class="req-chip">Java ou Bedrock</span>
-              <span class="req-chip">13+ anos</span>
-              <span class="req-chip">Ativo no Discord</span>
-              <span class="req-chip">Respeito sempre</span>
-            </div>
-          </div>
-        </div>
-      </div>
+  <!-- O convite chega fechado, e só revela a mensagem formal (com Mahou
+       como remetente + botões de aceitar/recusar) quando clicado — o
+       prompt some com um estouro de partículas (wireInviteCard() em
+       script.js) enquanto o texto surge aos poucos, como se a carta
+       estivesse sendo lida. O gatilho é um prompt no estilo "aperte
+       para continuar" de jogo retrô (mesma linguagem do "Toque para
+       entrar" da tela de entrada), não um objeto/ícone novo pra
+       decifrar. Personalização: abra o link com ?para=Nome (ex.:
+       index.html?para=Fulano) e o nome substitui "Você" no corpo da
+       mensagem — sem parâmetro, fica genérico e ainda funciona. -->
+  <div class="invite-card scroll-reveal">
+    <div class="seal-wrap" id="sealWrap">
+      <p class="invite-prompt">Uma mensagem da Golden Order aguarda por você.</p>
+      <button type="button" class="invite-open-btn" id="cardClosed" aria-expanded="false" aria-controls="cardReveal">
+        <span class="invite-open-bracket invite-open-bracket-l" aria-hidden="true">▸</span>
+        <span class="invite-open-label">Ler Convite</span>
+        <span class="invite-open-bracket invite-open-bracket-r" aria-hidden="true">◂</span>
+      </button>
     </div>
 
-    <div class="panel">
-      <div class="ticket rules-ticket">
-        <span class="wax-seal" id="rulesSeal" aria-hidden="true">G</span>
-        <div class="ticket-top">
-          <span class="ticket-label">Regras Oficiais</span>
-          <span class="ticket-serial">Nº 002-GO</span>
-        </div>
-        <h2>ANTES DE ENTRAR</h2>
-        <p class="teaser">Poucas regras, mas inegociáveis.</p>
-
-        <div class="perf-row">
-          <hr class="perf">
-        </div>
-
-        <button class="ticket-toggle" id="rulesToggle" aria-expanded="false" aria-controls="rulesExpand">
-          <span class="toggle-text">Ver as regras</span>
-          <span class="chevron">▼</span>
-        </button>
-
-        <div class="ticket-expand-wrap" id="rulesExpand">
-          <div class="ticket-expand-inner">
-            <ol class="rules-list">
-              <li>Respeito acima de tudo — sem discurso de ódio, assédio ou toxicidade.</li>
-              <li>Nada de grief, roubo ou trapaça contra outros membros.</li>
-              <li>Avise no Discord se for ficar ausente por um bom tempo.</li>
-              <li>Proibido hacks, clientes modificados ou exploits.</li>
-              <li>Idade mínima de 13 anos.</li>
-              <li>Ajude quem está começando — todo mundo já foi novato.</li>
-            </ol>
+    <div class="card-reveal" id="cardReveal">
+      <div class="card-reveal-inner">
+        <div class="card-open">
+          <p class="card-from-label">De</p>
+          <p class="card-sender">Mahou</p>
+          <p class="card-sender-role">Líder da Golden Order</p>
+          <div class="rule rule-sm"><span class="blk"></span><span class="diamond"></span><span class="blk"></span></div>
+          <p class="card-body"><span class="ticket-recipient" id="ticketRecipient">Você</span> foi convidado(a) a fazer parte da Golden Order — um clã de Minecraft inspirado em Elden Ring, formado por poucos, escolhidos a dedo.</p>
+          <p class="card-body card-question">Aceita entrar para a Ordem?</p>
+          <div class="card-actions">
+            <a class="invite-open-btn" href="questionario.html">
+              <span class="invite-open-bracket invite-open-bracket-l" aria-hidden="true">▸</span>
+              <span class="invite-open-label">Aceitar</span>
+              <span class="invite-open-bracket invite-open-bracket-r" aria-hidden="true">◂</span>
+            </a>
+            <a class="invite-open-btn" href="recusado.html">
+              <span class="invite-open-bracket invite-open-bracket-l" aria-hidden="true">▸</span>
+              <span class="invite-open-label">Recusar</span>
+              <span class="invite-open-bracket invite-open-bracket-r" aria-hidden="true">◂</span>
+            </a>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="cta-wrap scroll-reveal">
-    <a class="cta" id="ctaBtn" href="questionario.html">Quero Entrar na Ordem</a>
-    <!-- Troque o href abaixo pelo link de convite real do seu servidor
-         do Discord (Configurações do Servidor > Convites) -->
-    <a class="cta cta-secondary" href="https://discord.gg/SEU_CONVITE_AQUI" target="_blank" rel="noopener noreferrer">Entrar no Discord</a>
-    <span class="cta-note">Responda ao convite abaixo para confirmar sua entrada</span>
-  </div>
-
   <div class="rule"><span class="blk"></span><span class="diamond"></span><span class="blk"></span></div>
 
-  <!-- Quem Somos: troque nome/cargo/avatar pelos dados reais dos
-       fundadores e staff do clã. O avatar hoje é só a inicial do nome;
-       pra usar uma foto/skin, troque o <span> por <img class="team-avatar" src="..."> -->
-  <section class="team scroll-reveal">
-    <p class="kicker">Quem Somos</p>
-    <div class="team-grid">
-      <div class="team-card">
-        <span class="team-avatar">F</span>
-        <p class="team-name">Nome do Fundador</p>
-        <p class="team-role">Fundador</p>
-      </div>
-      <div class="team-card">
-        <span class="team-avatar">C</span>
-        <p class="team-name">Nome do Co-fundador</p>
-        <p class="team-role">Co-fundador</p>
-      </div>
-      <div class="team-card">
-        <span class="team-avatar">M</span>
-        <p class="team-name">Nome do Moderador</p>
-        <p class="team-role">Moderador</p>
-      </div>
+  <footer>
+    <!-- Status do servidor: definido manualmente em script.js (procure
+         por SERVER_STATUS) — sem nenhuma consulta externa. Vive no
+         rodapé agora, discreto, pra não interromper o clima do convite. -->
+    <div class="server-status" id="serverStatus">
+      <span class="status-dot" id="statusDot"></span>
+      <span id="statusText">Servidor online</span>
     </div>
-  </section>
-
-  <!-- Árvore de membros: página separada (membros.html) com todo mundo
-       do clã em formato de árvore genealógica -->
-  <section class="tree-cta scroll-reveal">
-    <p class="kicker">A Ordem Completa</p>
-    <p class="tree-cta-text">Veja a estrutura completa da Golden Order, da fundação até quem acabou de entrar.</p>
-    <a class="cta cta-secondary" href="membros.html">Ver Árvore de Membros</a>
-  </section>
-
-  <div class="rule"><span class="blk"></span><span class="diamond"></span><span class="blk"></span></div>
-
-  <footer>Golden Order · Comunidade de Minecraft<br>Construída sobre confiança e ouro</footer>
+    <p class="footer-tagline">Golden Order · Feito para um, não para todos</p>
+  </footer>
 </main>
-
-<!-- CTA flutuante: aparece só depois que o CTA original sai da tela
-     (ver IntersectionObserver em script.js), pra quem rolar a página
-     inteira não perder o botão de entrada de vista -->
-<a class="cta floating-cta" id="floatingCta" href="questionario.html">Quero Entrar</a>
 
 <script src="script.js"></script>
 

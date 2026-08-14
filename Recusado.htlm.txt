@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Golden Order — Até uma Próxima</title>
+<meta name="theme-color" content="#e8a413">
+<meta name="robots" content="noindex">
+
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="recusado.css">
+</head>
+<body>
+
+<div class="bg-fixed"></div>
+<div id="particles"></div>
+<div class="vignette"></div>
+<div class="scanlines"></div>
+
+<main class="recusado-main">
+  <img class="logo-recusado" src="assets/logo.png" alt="Golden Order">
+  <p class="kicker">Até uma Próxima</p>
+
+  <div class="rule"><span class="blk"></span><span class="diamond"></span><span class="blk"></span></div>
+
+  <p class="recusado-body">Tudo bem. Obrigado pelo tempo que dedicou a este convite — ele foi feito a dedo, pensando em você, e sua resposta é totalmente respeitada.</p>
+  <p class="recusado-body">Se um dia mudar de ideia, a porta da Golden Order continua aberta.</p>
+
+  <div class="rule"><span class="blk"></span><span class="diamond"></span><span class="blk"></span></div>
+
+  <footer>Golden Order · Feito para um, não para todos</footer>
+</main>
+
+<script src="recusado.js"></script>
+
+</body>
+</html>
