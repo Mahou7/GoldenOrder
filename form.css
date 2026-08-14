@@ -31,7 +31,7 @@
 .back-link:hover{ color:var(--gold-1); }
 
 .logo-form{
-  width:min(60vw, 260px);
+  width:min(66vw, 320px);
   margin-bottom:6px;
   filter:drop-shadow(0 4px 0 rgba(0,0,0,0.5));
 }

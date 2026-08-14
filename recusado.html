@@ -2,6 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
+<script>(function(){try{var t=localStorage.getItem('golden-order-theme');document.documentElement.setAttribute('data-theme',t==='light'?'light':'dark');}catch(e){}})();</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Golden Order — Até uma Próxima</title>
 <meta name="theme-color" content="#e8a413">
@@ -19,47 +20,94 @@
 <link rel="stylesheet" href="form.css">
 <link rel="stylesheet" href="recusado.css">
 </head>
-<body>
+<body data-i18n-doctitle="doc.title.recusado">
 
 <div class="bg-fixed"></div>
 <div id="particles"></div>
 <div class="vignette"></div>
 <div class="scanlines"></div>
 
+<!-- Configurações: idioma e tema (claro/escuro), lembrados em todas
+     as páginas do site via localStorage — ver i18n.js -->
+<button type="button" class="settings-btn" id="settingsBtn" aria-label="Configurações" data-i18n-aria-label="settings.button">⚙</button>
+<div class="settings-overlay" id="settingsOverlay">
+  <div class="settings-box">
+    <button type="button" class="settings-close" id="settingsClose" aria-label="Fechar" data-i18n-aria-label="settings.close">✕</button>
+    <h3 class="settings-title" data-i18n="settings.title">Configurações</h3>
+
+    <div class="settings-group">
+      <p class="settings-label" data-i18n="settings.language">Idioma</p>
+      <div class="settings-options">
+        <button type="button" class="settings-option" data-lang="pt">Português</button>
+        <button type="button" class="settings-option" data-lang="en">English</button>
+        <button type="button" class="settings-option" data-lang="es">Español</button>
+      </div>
+    </div>
+
+    <div class="settings-group">
+      <p class="settings-label" data-i18n="settings.theme">Tema</p>
+      <div class="settings-options">
+        <button type="button" class="settings-option" data-theme="dark" data-i18n="settings.dark">Escuro</button>
+        <button type="button" class="settings-option" data-theme="light" data-i18n="settings.light">Claro</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <main class="recusado-main">
-  <img class="logo-recusado" src="assets/logo.png" alt="Golden Order">
-  <p class="kicker">Até uma Próxima</p>
+  <a class="back-link" href="index.html">&larr; <span data-i18n="nav.backToInvite">Voltar ao convite</span></a>
+
+  <img class="logo-recusado" src="logo.png" alt="Golden Order">
+  <p class="kicker" data-i18n="recusado.kicker">Até uma Próxima</p>
 
   <div class="rule"><span class="blk"></span><span class="diamond"></span><span class="blk"></span></div>
 
-  <!-- Passo 1: só depois que a pessoa confirma com o nick é que o aviso
-       vai pro Discord (ver recusado.js) — chegar nesta página sozinho
-       não conta como recusa. -->
+  <!-- Passo 1: pede o nick. Passo 2: um aviso final ("tem certeza?")
+       antes de qualquer coisa ser enviada — só depois de confirmar
+       esse aviso é que o Discord é avisado (ver recusado.js). Chegar
+       nesta página, ou só preencher o nick, não conta como recusa. -->
   <div id="recusadoStep1">
-    <p class="recusado-body">Antes de ir, deixe seu nick no jogo — é só pra Golden Order saber quem passou por aqui.</p>
+    <p class="recusado-body" data-i18n="recusado.intro">Antes de ir, deixe seu nick no jogo — é só pra Golden Order saber quem passou por aqui.</p>
     <form class="recusado-form" id="recusadoForm" novalidate>
       <div class="field">
-        <label for="fNickRecusa">Nick no jogo</label>
+        <label for="fNickRecusa" data-i18n="field.nick">Nick no jogo</label>
         <input type="text" id="fNickRecusa" name="nick" required maxlength="30" autocomplete="off">
       </div>
       <button type="submit" class="invite-open-btn" id="confirmRecusaBtn">
         <span class="invite-open-bracket invite-open-bracket-l" aria-hidden="true">▸</span>
-        <span class="invite-open-label">Confirmar Recusa</span>
+        <span class="invite-open-label" data-i18n="btn.confirmDecline">Confirmar Recusa</span>
         <span class="invite-open-bracket invite-open-bracket-r" aria-hidden="true">◂</span>
       </button>
     </form>
   </div>
 
+  <div id="recusadoStepWarn" hidden>
+    <p class="recusado-body recusado-warn" data-i18n="recusado.warn">Atenção: ao confirmar, a Golden Order vai entender que você realmente não quer entrar — ninguém do clã vai entrar em contato depois disso. Tem certeza?</p>
+    <div class="recusado-warn-actions">
+      <button type="button" class="invite-open-btn" id="warnBackBtn">
+        <span class="invite-open-bracket invite-open-bracket-l" aria-hidden="true">▸</span>
+        <span class="invite-open-label" data-i18n="btn.back">Voltar</span>
+        <span class="invite-open-bracket invite-open-bracket-r" aria-hidden="true">◂</span>
+      </button>
+      <button type="button" class="invite-open-btn" id="warnConfirmBtn">
+        <span class="invite-open-bracket invite-open-bracket-l" aria-hidden="true">▸</span>
+        <span class="invite-open-label" data-i18n="btn.yesDecline">Sim, Recusar</span>
+        <span class="invite-open-bracket invite-open-bracket-r" aria-hidden="true">◂</span>
+      </button>
+    </div>
+  </div>
+
   <div id="recusadoStep2" hidden>
-    <p class="recusado-body">Tudo bem. Obrigado pelo tempo que dedicou a este convite — ele foi feito a dedo, pensando em você, e sua resposta é totalmente respeitada.</p>
-    <p class="recusado-body">Se um dia mudar de ideia, a porta da Golden Order continua aberta.</p>
+    <p class="recusado-body" data-i18n="recusado.farewell1">Tudo bem. Obrigado pelo tempo que dedicou a este convite — ele foi feito a dedo, pensando em você, e sua resposta é totalmente respeitada.</p>
+    <p class="recusado-body" data-i18n="recusado.farewell2">Se um dia mudar de ideia, a porta da Golden Order continua aberta.</p>
   </div>
 
   <div class="rule"><span class="blk"></span><span class="diamond"></span><span class="blk"></span></div>
 
-  <footer>Golden Order · Feito para um, não para todos</footer>
+  <footer>Golden Order · <span data-i18n="footer.tagline">Feito para um, não para todos</span></footer>
 </main>
 
+<script src="i18n.js"></script>
 <script src="recusado.js"></script>
 
 </body>

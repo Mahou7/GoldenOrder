@@ -40,6 +40,15 @@ const CONFIG = {
   const modalCopy = document.getElementById('modalCopy');
   const modalClose = document.getElementById('modalClose');
 
+  // textos deste arquivo que aparecem NA TELA (título/corpo do modal,
+  // texto do botão) seguem o idioma escolhido em i18n.js. Os campos
+  // enviados pro Discord (sendToDiscord, mais abaixo) ficam sempre em
+  // português de propósito — quem lê é a staff do clã, não quem
+  // preenche o formulário.
+  function t(key, fallback) {
+    return window.GoldenOrderI18n ? window.GoldenOrderI18n.t(key) : fallback;
+  }
+
   function fieldLabel(name) {
     const map = {
       idade: 'Idade',
@@ -88,8 +97,8 @@ const CONFIG = {
   modalCopy.addEventListener('click', async () => {
     try {
       await navigator.clipboard.writeText(modalSummary.value);
-      modalCopy.textContent = 'Copiado!';
-      setTimeout(() => { modalCopy.textContent = 'Copiar resumo'; }, 1600);
+      modalCopy.textContent = t('modal.copied', 'Copiado!');
+      setTimeout(() => { modalCopy.textContent = t('modal.copy', 'Copiar resumo'); }, 1600);
     } catch (e) {
       modalSummary.select();
     }
@@ -135,7 +144,7 @@ const CONFIG = {
     const summary = buildSummary(data);
 
     submitBtn.disabled = true;
-    submitBtn.textContent = 'Enviando...';
+    submitBtn.textContent = t('btn.submitting', 'Enviando...');
 
     const usingWebhook = !!CONFIG.discordWebhookUrl;
 
@@ -143,8 +152,8 @@ const CONFIG = {
       if (usingWebhook) {
         await sendToDiscord(data, summary);
         openModal({
-          title: 'CONVITE CONFIRMADO!',
-          text: 'Sua confirmação chegou até a Golden Order. Fique de olho no Discord — alguém do clã vai te chamar em breve.',
+          title: t('modal.success.title', 'CONVITE CONFIRMADO!'),
+          text: t('modal.success.text', 'Sua confirmação chegou até a Golden Order. Fique de olho no Discord — alguém do clã vai te chamar em breve.'),
           showSummary: false,
           showCopy: false
         });
@@ -153,26 +162,26 @@ const CONFIG = {
         // sem webhook configurado: abre o e-mail do usuário já preenchido
         sendByEmail(data, summary);
         openModal({
-          title: 'QUASE LÁ!',
-          text: 'Seu app de e-mail deve abrir com a confirmação pronta — é só clicar em enviar. Se nada abrir, copie o resumo abaixo e envie manualmente.',
+          title: t('modal.email.title', 'QUASE LÁ!'),
+          text: t('modal.email.text', 'Seu app de e-mail deve abrir com a confirmação pronta — é só clicar em enviar. Se nada abrir, copie o resumo abaixo e envie manualmente.'),
           showSummary: true,
           summaryText: summary,
           showCopy: true
         });
       }
     } catch (err) {
-      formNote.textContent = 'Não deu pra enviar agora. Copie o resumo abaixo e envie pelo Discord do clã.';
+      formNote.textContent = t('form.note.error', 'Não deu pra enviar agora. Copie o resumo abaixo e envie pelo Discord do clã.');
       formNote.classList.add('error');
       openModal({
-        title: 'ALGO DEU ERRADO',
-        text: 'O envio automático falhou. Copie o resumo abaixo e cole no Discord da Golden Order — ninguém vai perder sua confirmação por isso.',
+        title: t('modal.error.title', 'ALGO DEU ERRADO'),
+        text: t('modal.error.text', 'O envio automático falhou. Copie o resumo abaixo e cole no Discord da Golden Order — ninguém vai perder sua confirmação por isso.'),
         showSummary: true,
         summaryText: summary,
         showCopy: true
       });
     } finally {
       submitBtn.disabled = false;
-      submitBtn.textContent = 'Confirmar Entrada';
+      submitBtn.textContent = t('btn.submit', 'Confirmar Entrada');
     }
   });
 })();

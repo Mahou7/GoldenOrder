@@ -2,6 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
+<script>(function(){try{var t=localStorage.getItem('golden-order-theme');document.documentElement.setAttribute('data-theme',t==='light'?'light':'dark');}catch(e){}})();</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Golden Order — Árvore de Membros</title>
 <meta name="theme-color" content="#e8a413">
@@ -18,18 +19,45 @@
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="membros.css">
 </head>
-<body>
+<body data-i18n-doctitle="doc.title.membros">
 
 <div class="bg-fixed"></div>
 <div id="particles"></div>
 <div class="vignette"></div>
 <div class="scanlines"></div>
 
-<main class="tree-main">
-  <a class="back-link" href="index.html">&larr; Voltar ao convite</a>
+<!-- Configurações: idioma e tema (claro/escuro), lembrados em todas
+     as páginas do site via localStorage — ver i18n.js -->
+<button type="button" class="settings-btn" id="settingsBtn" aria-label="Configurações" data-i18n-aria-label="settings.button">⚙</button>
+<div class="settings-overlay" id="settingsOverlay">
+  <div class="settings-box">
+    <button type="button" class="settings-close" id="settingsClose" aria-label="Fechar" data-i18n-aria-label="settings.close">✕</button>
+    <h3 class="settings-title" data-i18n="settings.title">Configurações</h3>
 
-  <img class="logo-tree" src="assets/logo.png" alt="Golden Order">
-  <p class="kicker">A Árvore da Ordem</p>
+    <div class="settings-group">
+      <p class="settings-label" data-i18n="settings.language">Idioma</p>
+      <div class="settings-options">
+        <button type="button" class="settings-option" data-lang="pt">Português</button>
+        <button type="button" class="settings-option" data-lang="en">English</button>
+        <button type="button" class="settings-option" data-lang="es">Español</button>
+      </div>
+    </div>
+
+    <div class="settings-group">
+      <p class="settings-label" data-i18n="settings.theme">Tema</p>
+      <div class="settings-options">
+        <button type="button" class="settings-option" data-theme="dark" data-i18n="settings.dark">Escuro</button>
+        <button type="button" class="settings-option" data-theme="light" data-i18n="settings.light">Claro</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<main class="tree-main">
+  <a class="back-link" href="index.html">&larr; <span data-i18n="nav.backToInvite">Voltar ao convite</span></a>
+
+  <img class="logo-tree" src="logo.png" alt="Golden Order">
+  <p class="kicker" data-i18n="membros.kicker">A Árvore da Ordem</p>
 
   <!-- Hierarquia da Golden Order em HTML/CSS puro (sem JavaScript).
        Cada .rank-tier é um cargo, do mais alto pro mais baixo, com
@@ -42,14 +70,14 @@
        quando alguém assumir o posto. -->
   <div class="rank-ladder">
     <div class="rank-tier">
-      <p class="rank-label">Líder</p>
+      <p class="rank-label" data-i18n="rank.leader">Líder</p>
       <div class="rank-members">
         <span class="member-chip member-chip-lead">Mahou</span>
       </div>
     </div>
 
     <div class="rank-tier">
-      <p class="rank-label">Co-líder</p>
+      <p class="rank-label" data-i18n="rank.coleader">Co-líder</p>
       <div class="rank-members">
         <span class="member-chip member-chip-lead">Radyzinn</span>
         <span class="member-chip member-chip-lead">Gatti</span>
@@ -57,35 +85,35 @@
     </div>
 
     <div class="rank-tier">
-      <p class="rank-label">Artífice Mestre</p>
+      <p class="rank-label" data-i18n="rank.masterArtisan">Artífice Mestre</p>
       <div class="rank-members">
         <span class="member-chip">Rik_001</span>
       </div>
     </div>
 
     <div class="rank-tier">
-      <p class="rank-label">Artífice</p>
+      <p class="rank-label" data-i18n="rank.artisan">Artífice</p>
       <div class="rank-members">
-        <span class="member-chip member-chip-empty">Nenhum membro nesse cargo ainda</span>
+        <span class="member-chip member-chip-empty" data-i18n="rank.emptyNotice">Nenhum membro nesse cargo ainda</span>
       </div>
     </div>
 
     <div class="rank-tier">
-      <p class="rank-label">Grão Mestre</p>
+      <p class="rank-label" data-i18n="rank.grandMaster">Grão Mestre</p>
       <div class="rank-members">
         <span class="member-chip">Nisaka</span>
       </div>
     </div>
 
     <div class="rank-tier">
-      <p class="rank-label">Consagrado</p>
+      <p class="rank-label" data-i18n="rank.consecrated">Consagrado</p>
       <div class="rank-members">
         <span class="member-chip">Andy</span>
       </div>
     </div>
 
     <div class="rank-tier">
-      <p class="rank-label">Juramentado</p>
+      <p class="rank-label" data-i18n="rank.sworn">Juramentado</p>
       <div class="rank-members">
         <span class="member-chip">Hyper</span>
         <span class="member-chip">Sandryzz</span>
@@ -96,7 +124,7 @@
     </div>
 
     <div class="rank-tier">
-      <p class="rank-label">Recruta</p>
+      <p class="rank-label" data-i18n="rank.recruit">Recruta</p>
       <div class="rank-members">
         <span class="member-chip">Tinylung</span>
         <span class="member-chip">Atlas</span>
@@ -106,8 +134,10 @@
     </div>
   </div>
 
-  <p class="tree-note">Essa é a estrutura da Golden Order — da liderança até quem entrou por último.</p>
+  <p class="tree-note" data-i18n="tree.note">Essa é a estrutura da Golden Order — da liderança até quem entrou por último.</p>
 </main>
+
+<script src="i18n.js"></script>
 
 </body>
 </html>

@@ -2,6 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
+<script>(function(){try{var t=localStorage.getItem('golden-order-theme');document.documentElement.setAttribute('data-theme',t==='light'?'light':'dark');}catch(e){}})();</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Golden Order — Confirmação de Convite</title>
 <meta name="theme-color" content="#e8a413">
@@ -18,48 +19,75 @@
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="form.css">
 </head>
-<body>
+<body data-i18n-doctitle="doc.title.questionario">
 
 <div class="bg-fixed"></div>
 <div id="particles"></div>
 <div class="vignette"></div>
 <div class="scanlines"></div>
 
-<main class="form-main">
-  <a class="back-link" href="index.html">&larr; Voltar ao convite</a>
+<!-- Configurações: idioma e tema (claro/escuro), lembrados em todas
+     as páginas do site via localStorage — ver i18n.js -->
+<button type="button" class="settings-btn" id="settingsBtn" aria-label="Configurações" data-i18n-aria-label="settings.button">⚙</button>
+<div class="settings-overlay" id="settingsOverlay">
+  <div class="settings-box">
+    <button type="button" class="settings-close" id="settingsClose" aria-label="Fechar" data-i18n-aria-label="settings.close">✕</button>
+    <h3 class="settings-title" data-i18n="settings.title">Configurações</h3>
 
-  <img class="logo-form" src="assets/logo.png" alt="Golden Order">
-  <p class="kicker">Confirme seu Convite</p>
+    <div class="settings-group">
+      <p class="settings-label" data-i18n="settings.language">Idioma</p>
+      <div class="settings-options">
+        <button type="button" class="settings-option" data-lang="pt">Português</button>
+        <button type="button" class="settings-option" data-lang="en">English</button>
+        <button type="button" class="settings-option" data-lang="es">Español</button>
+      </div>
+    </div>
+
+    <div class="settings-group">
+      <p class="settings-label" data-i18n="settings.theme">Tema</p>
+      <div class="settings-options">
+        <button type="button" class="settings-option" data-theme="dark" data-i18n="settings.dark">Escuro</button>
+        <button type="button" class="settings-option" data-theme="light" data-i18n="settings.light">Claro</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<main class="form-main">
+  <a class="back-link" href="index.html">&larr; <span data-i18n="nav.backToInvite">Voltar ao convite</span></a>
+
+  <img class="logo-form" src="logo.png" alt="Golden Order">
+  <p class="kicker" data-i18n="questionario.kicker">Confirme seu Convite</p>
 
   <form class="ticket form-ticket" id="joinForm" novalidate>
     <div class="field-row">
       <div class="field">
-        <label for="fAge">Idade</label>
+        <label for="fAge" data-i18n="field.age">Idade</label>
         <input type="number" id="fAge" name="idade" required min="8" max="99" inputmode="numeric">
       </div>
       <div class="field">
-        <label for="fNick">Nick no jogo</label>
+        <label for="fNick" data-i18n="field.nick">Nick no jogo</label>
         <input type="text" id="fNick" name="nick_minecraft" required maxlength="30">
       </div>
     </div>
 
     <div class="field-row">
       <div class="field">
-        <label for="fName">Nome</label>
+        <label for="fName" data-i18n="field.name">Nome</label>
         <input type="text" id="fName" name="nome" required maxlength="40" autocomplete="given-name">
       </div>
       <div class="field">
-        <label for="fDiscord">Discord</label>
+        <label for="fDiscord" data-i18n="field.discord">Discord</label>
         <input type="text" id="fDiscord" name="discord" required maxlength="40">
       </div>
     </div>
 
     <div class="field">
-      <label for="fAbout">Fale um pouco sobre você</label>
+      <label for="fAbout" data-i18n="field.about">Fale um pouco sobre você</label>
       <textarea id="fAbout" name="sobre_voce" required maxlength="500" rows="4"></textarea>
     </div>
 
-    <button type="submit" class="cta submit-btn" id="submitBtn">Confirmar Entrada</button>
+    <button type="submit" class="cta submit-btn" id="submitBtn" data-i18n="btn.submit">Confirmar Entrada</button>
     <p class="form-note" id="formNote"></p>
   </form>
 </main>
@@ -71,12 +99,13 @@
     <p id="modalText"></p>
     <textarea id="modalSummary" class="modal-summary" readonly hidden></textarea>
     <div class="modal-actions">
-      <button id="modalCopy" type="button" hidden>Copiar resumo</button>
-      <button id="modalClose" type="button">Entendido</button>
+      <button id="modalCopy" type="button" hidden data-i18n="modal.copy">Copiar resumo</button>
+      <button id="modalClose" type="button" data-i18n="modal.understood">Entendido</button>
     </div>
   </div>
 </div>
 
+<script src="i18n.js"></script>
 <script src="form.js"></script>
 
 </body>

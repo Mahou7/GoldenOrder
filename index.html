@@ -2,9 +2,14 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
+<!-- aplica o tema salvo (claro/escuro) antes do CSS pintar a página,
+     senão dá pra ver um flash rápido do tema errado ao carregar —
+     ver i18n.js pra a lógica completa (isso aqui é só a versão
+     "de emergência", rápida o bastante pra rodar antes da 1ª pintura) -->
+<script>(function(){try{var t=localStorage.getItem('golden-order-theme');document.documentElement.setAttribute('data-theme',t==='light'?'light':'dark');}catch(e){}})();</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Golden Order — Convite</title>
-<meta name="description" content="A Golden Order é um clã de Minecraft inspirado em Elden Ring. Um convite exclusivo, para poucos escolhidos a dedo.">
+<meta name="description" content="A Golden Order é um clã de Minecraft — um grupo de amigos que reúne gente ativa e capacitada pra crescer e jogar junto. Um convite exclusivo.">
 <meta name="theme-color" content="#e8a413">
 <!-- noindex: esse link não é pra ser encontrado por busca nem
      divulgado publicamente, só enviado direto pra quem foi convidado -->
@@ -26,19 +31,19 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="Golden Order — Convite Oficial">
 <meta property="og:description" content="Um clã de Minecraft. Um convite para poucos.">
-<meta property="og:image" content="SUA_URL_AQUI/assets/og-image.png">
+<meta property="og:image" content="SUA_URL_AQUI/og-image.png">
 <meta property="og:url" content="SUA_URL_AQUI/">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Golden Order — Convite Oficial">
 <meta name="twitter:description" content="Um clã de Minecraft. Um convite para poucos.">
-<meta name="twitter:image" content="SUA_URL_AQUI/assets/og-image.png">
+<meta name="twitter:image" content="SUA_URL_AQUI/og-image.png">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body data-i18n-doctitle="doc.title.index">
 
 <!-- ============================================================
      LOGO: a logo oficial da Golden Order enviada pelo usuário já
@@ -54,26 +59,54 @@
 <div class="scanlines"></div>
 
 <!-- Intro animation -->
-<div id="intro" tabindex="0" role="button" aria-label="Toque para entrar">
+<div id="intro" tabindex="0" role="button" aria-label="Toque para entrar" data-i18n-aria-label="intro.hint">
   <div class="intro-logo-wrap">
     <div class="intro-glow"></div>
-    <img class="intro-logo" src="assets/logo.png" alt="Golden Order">
+    <img class="intro-logo" src="logo.png" alt="Golden Order">
   </div>
-  <div class="toast pixel-font">CONQUISTA DESBLOQUEADA: CONVITE ENCONTRADO</div>
+  <div class="toast pixel-font" data-i18n="intro.toast">NOVA JORNADA INICIADA: CONVITE ENCONTRADO</div>
 
   <div class="intro-loading" aria-hidden="true">
-    <span class="intro-loading-label">Carregando o convite...</span>
+    <span class="intro-loading-label" data-i18n="intro.loading">Carregando o convite...</span>
     <div class="intro-loading-track">
       <div class="intro-loading-bar"></div>
     </div>
   </div>
 
-  <div class="intro-hint">Toque para entrar</div>
+  <div class="intro-hint" data-i18n="intro.hint">Toque para entrar</div>
+</div>
+
+<!-- Configurações: idioma e tema (claro/escuro), lembrados em todas
+     as páginas do site via localStorage — ver i18n.js. Nesta página o
+     gatilho é o botão logo abaixo de "Ler Convite" (dentro do
+     .seal-wrap, mais abaixo), não uma engrenagem fixa. -->
+<div class="settings-overlay" id="settingsOverlay">
+  <div class="settings-box">
+    <button type="button" class="settings-close" id="settingsClose" aria-label="Fechar" data-i18n-aria-label="settings.close">✕</button>
+    <h3 class="settings-title" data-i18n="settings.title">Configurações</h3>
+
+    <div class="settings-group">
+      <p class="settings-label" data-i18n="settings.language">Idioma</p>
+      <div class="settings-options">
+        <button type="button" class="settings-option" data-lang="pt">Português</button>
+        <button type="button" class="settings-option" data-lang="en">English</button>
+        <button type="button" class="settings-option" data-lang="es">Español</button>
+      </div>
+    </div>
+
+    <div class="settings-group">
+      <p class="settings-label" data-i18n="settings.theme">Tema</p>
+      <div class="settings-options">
+        <button type="button" class="settings-option" data-theme="dark" data-i18n="settings.dark">Escuro</button>
+        <button type="button" class="settings-option" data-theme="light" data-i18n="settings.light">Claro</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <main id="main">
-  <img class="logo-main" src="assets/logo.png" alt="Golden Order">
-  <p class="kicker">Inspirado em Elden Ring, construído em blocos</p>
+  <img class="logo-main" src="logo.png" alt="Golden Order">
+  <p class="kicker" data-i18n="index.kicker">Um grupo de amigos, construído em blocos</p>
 
   <!-- O convite chega fechado, e só revela a mensagem formal (com Mahou
        como remetente + botões de aceitar/recusar) quando clicado — o
@@ -87,32 +120,41 @@
        mensagem — sem parâmetro, fica genérico e ainda funciona. -->
   <div class="invite-card scroll-reveal">
     <div class="seal-wrap" id="sealWrap">
-      <p class="invite-prompt">Uma mensagem da Golden Order aguarda por você.</p>
+      <p class="invite-prompt" data-i18n="invite.prompt">Uma mensagem da Golden Order aguarda por você.</p>
       <button type="button" class="invite-open-btn" id="cardClosed" aria-expanded="false" aria-controls="cardReveal">
         <span class="invite-open-bracket invite-open-bracket-l" aria-hidden="true">▸</span>
-        <span class="invite-open-label">Ler Convite</span>
+        <span class="invite-open-label" data-i18n="invite.open">Ler Convite</span>
         <span class="invite-open-bracket invite-open-bracket-r" aria-hidden="true">◂</span>
       </button>
+      <button type="button" class="settings-inline-btn" id="settingsBtn" aria-haspopup="dialog" aria-controls="settingsOverlay">
+        <span class="settings-inline-icon" aria-hidden="true">⚙</span>
+        <span data-i18n="settings.button">Configurações</span>
+      </button>
+      <a href="membros.html" class="settings-inline-btn">
+        <span class="settings-inline-icon" aria-hidden="true">⚜</span>
+        <span data-i18n="nav.members">Membros</span>
+      </a>
     </div>
 
     <div class="card-reveal" id="cardReveal">
       <div class="card-reveal-inner">
         <div class="card-open">
-          <p class="card-from-label">De</p>
+          <p class="card-from-label" data-i18n="card.from">De</p>
           <p class="card-sender">Mahou</p>
-          <p class="card-sender-role">Líder da Golden Order</p>
+          <p class="card-sender-role" data-i18n="card.senderRole">Líder da Golden Order</p>
           <div class="rule rule-sm"><span class="blk"></span><span class="diamond"></span><span class="blk"></span></div>
-          <p class="card-body"><span class="ticket-recipient" id="ticketRecipient">Você</span> foi convidado(a) a fazer parte da Golden Order — um clã de Minecraft inspirado em Elden Ring, formado por poucos, escolhidos a dedo.</p>
-          <p class="card-body card-question">Aceita entrar para a Ordem?</p>
+          <p class="card-body"><span data-i18n="card.bodyPrefix"></span><span class="ticket-recipient" id="ticketRecipient">Você</span><span data-i18n="card.bodyRest"> foi convidado(a) a fazer parte da Golden Order — um clã criado por um grupo de amigos, que vai chamando aos poucos quem cruza nosso caminho.</span></p>
+          <p class="card-body" data-i18n="card.bodyPhilosophy">Não é sobre competir, colecionar ou acumular — é sobre juntar gente ativa e capacitada, de áreas diferentes, pra crescer e jogar junto.</p>
+          <p class="card-body card-question" data-i18n="card.question">Aceita entrar para a Ordem?</p>
           <div class="card-actions">
             <a class="invite-open-btn" href="questionario.html">
               <span class="invite-open-bracket invite-open-bracket-l" aria-hidden="true">▸</span>
-              <span class="invite-open-label">Aceitar</span>
+              <span class="invite-open-label" data-i18n="btn.accept">Aceitar</span>
               <span class="invite-open-bracket invite-open-bracket-r" aria-hidden="true">◂</span>
             </a>
             <a class="invite-open-btn" href="recusado.html">
               <span class="invite-open-bracket invite-open-bracket-l" aria-hidden="true">▸</span>
-              <span class="invite-open-label">Recusar</span>
+              <span class="invite-open-label" data-i18n="btn.decline">Recusar</span>
               <span class="invite-open-bracket invite-open-bracket-r" aria-hidden="true">◂</span>
             </a>
           </div>
@@ -131,10 +173,11 @@
       <span class="status-dot" id="statusDot"></span>
       <span id="statusText">Servidor online</span>
     </div>
-    <p class="footer-tagline">Golden Order · Feito para um, não para todos</p>
+    <p class="footer-tagline">Golden Order · <span data-i18n="footer.tagline">Feito para um, não para todos</span></p>
   </footer>
 </main>
 
+<script src="i18n.js"></script>
 <script src="script.js"></script>
 
 </body>

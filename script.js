@@ -37,15 +37,27 @@
     if (e.key === 'Enter' || e.key === ' ') revealMain();
   });
 
-  // --- personalização: ?para=Nome na URL troca "você" pelo nome de
-  // quem recebeu o convite, direto na frase do bilhete ---
+  // --- personalização: ?para=Nome na URL troca "você"/"you"/"ti" pelo
+  // nome de quem recebeu o convite, direto na frase do bilhete. Sem
+  // nome, mostra o pronome genérico no idioma atual — e continua
+  // certo se a pessoa trocar de idioma depois, pelo painel de
+  // configurações (ver i18n.js), sem apagar um nome real que já
+  // estivesse ali. ---
   (function personalizeInvite() {
     const params = new URLSearchParams(window.location.search);
     const name = (params.get('para') || '').trim().slice(0, 40);
     const recipient = document.getElementById('ticketRecipient');
-    if (name && recipient) {
-      recipient.textContent = name;
+    if (!recipient) return;
+
+    function render() {
+      if (name) {
+        recipient.textContent = name;
+      } else if (window.GoldenOrderI18n) {
+        recipient.textContent = window.GoldenOrderI18n.t('invite.you');
+      }
     }
+    render();
+    window.addEventListener('golden-order-i18n-changed', render);
   })();
 
   // --- propaga o ?para=Nome pros links de aceitar/recusar, pra que
@@ -111,12 +123,14 @@
 
   // --- status do servidor (definido manualmente, sem consultar nada) ---
   // Troque SERVER_STATUS pra 'offline' quando o servidor cair, e volte
-  // pra 'online' quando subir de novo. STATUS_LABEL é o texto exibido
-  // (pode incluir contagem de jogadores se você quiser, ex: "Online — 8/20").
+  // pra 'online' quando subir de novo. O texto exibido vem do dicionário
+  // de idiomas (chaves server.online/server.offline em i18n.js), pra
+  // acompanhar o idioma escolhido — inclusive se for trocado depois,
+  // sem precisar recarregar a página.
   const SERVER_STATUS = 'online'; // 'online' ou 'offline'
-  const STATUS_LABEL = {
-    online: 'Servidor online',
-    offline: 'Servidor offline no momento'
+  const STATUS_KEY = {
+    online: 'server.online',
+    offline: 'server.offline'
   };
 
   (function setServerStatus() {
@@ -124,7 +138,14 @@
     const text = document.getElementById('statusText');
     if (!dot || !text) return;
     dot.classList.add(SERVER_STATUS);
-    text.textContent = STATUS_LABEL[SERVER_STATUS];
+
+    function render() {
+      text.textContent = window.GoldenOrderI18n
+        ? window.GoldenOrderI18n.t(STATUS_KEY[SERVER_STATUS])
+        : text.textContent;
+    }
+    render();
+    window.addEventListener('golden-order-i18n-changed', render);
   })();
 
   // --- revelar seções ao rolar a página ---

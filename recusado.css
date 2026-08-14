@@ -18,7 +18,7 @@
 }
 
 .logo-recusado{
-  width:min(56vw, 220px);
+  width:min(62vw, 280px);
   margin-bottom:6px;
   filter:drop-shadow(0 4px 0 rgba(0,0,0,0.5));
 }
@@ -43,4 +43,32 @@
 .recusado-form .invite-open-btn{
   width:100%;
   margin-top:4px;
+}
+
+/* passo de aviso ("tem certeza?") antes de confirmar de vez a recusa */
+.recusado-warn{
+  color:#e8746c;
+  max-width:420px;
+}
+.recusado-warn-actions{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:16px;
+  max-width:420px;
+  margin:0 auto 34px;
+}
+/* min-width igual nos dois força "Voltar" e "Sim, Recusar" a terem a
+   mesma largura, mesmo o texto tendo tamanhos bem diferentes — o texto
+   mais curto só fica centralizado na sobra. Sem isso o botão maior
+   fica visivelmente mais largo, o que aqui, ainda mais num aviso de
+   "tem certeza", parecia sugerir qual opção é a "certa". */
+.recusado-warn-actions .invite-open-btn{
+  flex:0 0 auto;
+  min-width:215px;
+}
+
+@media (max-width:480px){
+  .recusado-warn-actions{ flex-direction:column; width:100%; max-width:320px; margin:0 auto 34px; }
+  .recusado-warn-actions .invite-open-btn{ width:100%; }
 }

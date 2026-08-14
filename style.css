@@ -10,6 +10,30 @@
     --ink:#f1e6c8;
     --ink-dim:#8b7f6a;
     --px:4px; /* base pixel unit for bevels/notches */
+    --vignette-opacity:0.9;
+    --scanline-opacity:0.22;
+  }
+
+  /* ---------- tema claro ----------
+     Trocado via data-theme="light" no elemento html (ver i18n.js).
+     Como quase todo o site usa as variáveis de cor (--bg-0/1/2, --ink,
+     --ink-dim, --gold-1 a 5) em vez de cor fixa, só redefinir elas
+     aqui já recolore praticamente tudo — só o brilho do vignette e
+     das scanlines precisa de um ajuste à parte, pra não pesar demais
+     numa página clara. */
+  html[data-theme="light"]{
+    --gold-1:#8a5a00;
+    --gold-2:#a5670b;
+    --gold-3:#c17f0e;
+    --gold-4:#e8a413;
+    --gold-5:#d8b878;
+    --bg-0:#f3ead2;
+    --bg-1:#e9dcb8;
+    --bg-2:#ddccA0;
+    --ink:#2c2110;
+    --ink-dim:#6b5b3a;
+    --vignette-opacity:0.25;
+    --scanline-opacity:0.06;
   }
 
   *{box-sizing:border-box;}
@@ -26,6 +50,36 @@
     -webkit-font-smoothing:none;
   }
   img{ image-rendering:pixelated; }
+
+  /* ---------- barra de rolagem ----------
+     a barra padrão do navegador (fina, cinza, com cantos redondos)
+     destoava do resto do visual em blocos/pixel — essa versão usa as
+     mesmas cores/bordas duras do site. Webkit (Chrome/Edge/Safari) +
+     Firefox cobertos separadamente, já que não existe uma propriedade
+     única pra isso. */
+  html{
+    scrollbar-width:auto;
+    scrollbar-color:var(--gold-4) var(--bg-1);
+  }
+  ::-webkit-scrollbar{
+    width:16px;
+    height:16px;
+  }
+  ::-webkit-scrollbar-track{
+    background:var(--bg-1);
+    border-left:2px solid #000;
+  }
+  ::-webkit-scrollbar-thumb{
+    background:var(--gold-4);
+    border:2px solid #000;
+    box-shadow:inset 2px 2px 0 0 rgba(255,246,201,0.2);
+  }
+  ::-webkit-scrollbar-thumb:hover{
+    background:var(--gold-3);
+  }
+  ::-webkit-scrollbar-corner{
+    background:var(--bg-1);
+  }
 
   /* ---------- foco visível (navegação por teclado) ---------- */
   /* :focus-visible só acende pra quem navega com Tab/teclado — no
@@ -88,8 +142,8 @@
     pointer-events:none;
     background:repeating-linear-gradient(
       180deg,
-      rgba(0,0,0,0.22) 0px,
-      rgba(0,0,0,0.22) 1px,
+      rgba(0,0,0,var(--scanline-opacity)) 0px,
+      rgba(0,0,0,var(--scanline-opacity)) 1px,
       transparent 2px,
       transparent 4px
     );
@@ -100,7 +154,7 @@
     inset:0;
     z-index:1;
     pointer-events:none;
-    box-shadow: inset 0 0 20vw rgba(0,0,0,0.9);
+    box-shadow: inset 0 0 20vw rgba(0,0,0,var(--vignette-opacity));
   }
 
   #particles{
@@ -153,12 +207,18 @@
        de entrada deixa de ser um vazio parado */
     background:rgba(5,4,3,0.4);
     cursor:pointer;
-    /* smooth ease instead of steps(): a stepped fade on a full-screen
-       overlay looks like the page freezing then jumping, not a fade */
-    transition:opacity 0.35s ease, visibility 0.35s ease;
+    /* ao clicar, a tela de entrada sobe rápido pra fora da viewport
+       (em vez de só sumir com um fade) — dá a sensação de que a
+       página "subiu" pra dar lugar ao convite por trás dela. A
+       curva acelera bem no fim (cubic-bezier), pra parecer um
+       movimento rápido e intencional, não um deslize suave. A
+       visibility só troca DEPOIS do movimento terminar (transition-
+       delay), pra ela continuar cobrindo a tela até sair de vista de
+       verdade. */
+    transition:transform 0.4s cubic-bezier(0.55,0,1,0.45), visibility 0s linear 0.4s;
   }
   #intro.hide{
-    opacity:0;
+    transform:translateY(-100%);
     visibility:hidden;
     pointer-events:none;
   }
@@ -171,7 +231,7 @@
   }
   .intro-glow{
     position:absolute;
-    width:min(70vw, 520px);
+    width:min(74vw, 580px);
     aspect-ratio:1;
     border-radius:50%;
     background:radial-gradient(circle, rgba(232,164,19,0.4) 0%, rgba(232,164,19,0) 68%);
@@ -185,7 +245,7 @@
 
   #intro .intro-logo{
     position:relative;
-    width:min(78vw, 420px);
+    width:min(84vw, 480px);
     clip-path:inset(0 100% 0 0);
     animation:buildReveal 0.9s steps(10,end) forwards;
     animation-delay:0.15s;
@@ -284,14 +344,22 @@
     padding:8vh 5vw 10vh;
     text-align:center;
     opacity:0;
+    transform:translateY(40px);
   }
   #main.reveal{
+    /* pequeno atraso pra a página de trás começar a "subir" logo
+       depois que a tela de entrada já iniciou a saída — reforça a
+       sensação de continuidade entre as duas telas */
     animation:fadeUp 0.45s ease forwards;
+    animation-delay:0.1s;
   }
-  @keyframes fadeUp{ to{ opacity:1; } }
+  @keyframes fadeUp{
+    from{ opacity:0; transform:translateY(40px); }
+    to{ opacity:1; transform:translateY(0); }
+  }
 
   .logo-main{
-    width:min(88vw, 460px);
+    width:min(92vw, 560px);
     margin-bottom:8px;
     animation:float 3s ease-in-out infinite;
     filter:drop-shadow(0 6px 0 rgba(0,0,0,0.5));
@@ -508,7 +576,7 @@
     width:min(480px, 130vw);
     height:min(480px, 130vw);
     transform:translate(-50%,-50%);
-    background:url('assets/bird-icon.png') center/contain no-repeat;
+    background:url('bird-icon.png') center/contain no-repeat;
     opacity:0.05;
     pointer-events:none;
   }
@@ -530,6 +598,7 @@
   .card-open > *:nth-child(5){ transition-delay:0.37s; }
   .card-open > *:nth-child(6){ transition-delay:0.45s; }
   .card-open > *:nth-child(7){ transition-delay:0.53s; }
+  .card-open > *:nth-child(8){ transition-delay:0.61s; }
 
   .card-from-label{
     font-family:'Press Start 2P', monospace;
@@ -661,6 +730,164 @@
       0 0 0 0 rgba(0,0,0,0.7);
   }
 
+  /* ---------- botão e painel de configurações (idioma + tema) ---------- */
+  .settings-btn{
+    position:fixed;
+    top:18px;
+    right:18px;
+    z-index:40;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:44px;
+    height:44px;
+    background:transparent;
+    border:2px solid var(--gold-5);
+    color:var(--gold-2);
+    font-size:1.2rem;
+    line-height:1;
+    cursor:pointer;
+    box-shadow:
+      inset 2px 2px 0 0 rgba(255,246,201,0.08),
+      inset -2px -2px 0 0 rgba(0,0,0,0.5);
+    transition:border-color 0.15s ease, transform 0.15s ease, opacity 0.3s ease;
+  }
+  .settings-btn:hover{
+    border-color:var(--gold-3);
+    transform:scale(1.06) rotate(20deg);
+  }
+  .settings-btn:active{
+    transform:scale(0.94) rotate(20deg);
+  }
+  /* na index.html o gatilho de configurações não é essa engrenagem
+     fixa — é o .settings-inline-btn logo abaixo do "Ler Convite"
+     (ver .seal-wrap). A engrenagem fixa continua servindo as outras
+     páginas (questionário, recusa, árvore de membros), que não têm
+     esse botão inline. */
+
+  /* botão inline de configurações, dentro do .seal-wrap, logo abaixo
+     do "Ler Convite" — mesma família visual (borda + bisel em pixel)
+     E MESMA COR dourada dos outros botões, só menor, pra não competir
+     em tamanho com o botão principal do convite */
+  .settings-inline-btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    background:transparent;
+    border:2px solid var(--gold-5);
+    padding:8px 14px;
+    cursor:pointer;
+    text-decoration:none;
+    font-family:'Press Start 2P', monospace;
+    font-size:0.62rem;
+    letter-spacing:0.05em;
+    color:var(--gold-2);
+    box-shadow:
+      inset 2px 2px 0 0 rgba(255,246,201,0.08),
+      inset -2px -2px 0 0 rgba(0,0,0,0.5);
+    transition:border-color 0.15s ease, color 0.15s ease, transform 0.08s steps(1);
+  }
+  .settings-inline-btn:hover{
+    border-color:var(--gold-3);
+  }
+  .settings-inline-btn:active{
+    transform:translate(2px,2px);
+  }
+  .settings-inline-icon{
+    font-size:0.85rem;
+  }
+
+  .settings-overlay{
+    position:fixed;
+    inset:0;
+    z-index:70;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    background:rgba(5,4,3,0.75);
+    opacity:0;
+    visibility:hidden;
+    transition:opacity 0.2s ease, visibility 0.2s ease;
+  }
+  .settings-overlay.show{
+    opacity:1;
+    visibility:visible;
+  }
+  .settings-box{
+    position:relative;
+    width:100%;
+    max-width:360px;
+    background:var(--bg-2);
+    border:var(--px) solid #000;
+    padding:30px 24px 24px;
+    text-align:left;
+    box-shadow:
+      inset 4px 4px 0 0 rgba(255,246,201,0.18),
+      inset -4px -4px 0 0 rgba(0,0,0,0.55),
+      8px 8px 0 0 rgba(0,0,0,0.7);
+  }
+  .settings-title{
+    margin:0 0 22px;
+    font-family:'Press Start 2P', monospace;
+    font-size:0.8rem;
+    color:var(--gold-2);
+    text-align:center;
+  }
+  .settings-close{
+    position:absolute;
+    top:10px;
+    right:10px;
+    background:transparent;
+    border:0;
+    color:var(--ink-dim);
+    font-size:1.3rem;
+    line-height:1;
+    padding:4px 6px;
+    cursor:pointer;
+  }
+  .settings-close:hover{ color:var(--gold-2); }
+
+  .settings-group{ margin-bottom:22px; }
+  .settings-group:last-child{ margin-bottom:0; }
+  .settings-label{
+    margin:0 0 10px;
+    font-family:'Press Start 2P', monospace;
+    font-size:0.55rem;
+    letter-spacing:0.04em;
+    text-transform:uppercase;
+    color:var(--gold-3);
+  }
+  .settings-options{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+  }
+  .settings-option{
+    flex:1 1 auto;
+    font-family:'VT323', monospace;
+    font-size:1.05rem;
+    color:var(--ink-dim);
+    background:var(--bg-1);
+    border:2px solid #000;
+    padding:8px 10px;
+    cursor:pointer;
+    text-align:center;
+    box-shadow:
+      inset 1px 1px 0 0 rgba(255,246,201,0.08),
+      inset -1px -1px 0 0 rgba(0,0,0,0.5);
+    transition:border-color 0.15s ease, color 0.15s ease;
+  }
+  .settings-option:hover{
+    color:var(--gold-2);
+  }
+  .settings-option.active{
+    border-color:var(--gold-3);
+    color:var(--gold-2);
+    background:var(--bg-2);
+  }
+
   footer{
     margin-top:40px;
     display:flex;
@@ -773,12 +1000,15 @@
   }
 
   @media (max-width:480px){
+    .settings-btn{ top:10px; right:10px; width:38px; height:38px; font-size:1rem; }
+    .settings-box{ padding:26px 18px 20px; }
     .ticket{ padding:24px 18px 20px; }
     .cta{ font-size:0.65rem; padding:14px 20px; }
     .cta-outline{ font-size:0.65rem; padding:14px 20px; }
     .invite-open-btn{ padding:10px 14px; gap:8px; }
     .invite-open-label{ font-size:0.7rem; }
     .invite-open-bracket{ font-size:1rem; }
+    .settings-inline-btn{ padding:7px 12px; font-size:0.56rem; }
     .card-sender{ font-size:1.15rem; }
     .card-open::before{ width:min(340px, 150vw); height:min(340px, 150vw); }
     .card-actions{ flex-direction:column; width:100%; }
@@ -790,6 +1020,8 @@
     #particles{ display:none; }
     .logo-main{ animation:none; }
     .status-dot.online{ animation:none; }
+    #intro{ transition:none !important; }
+    #main.reveal{ animation:none !important; opacity:1 !important; transform:none !important; }
     #intro .intro-logo{ animation:none; opacity:1; clip-path:none; transform:none; filter:none; }
     .intro-glow{ animation:none; opacity:0.7; transform:none; }
     .toast{ animation:none; opacity:1; transform:none; }
