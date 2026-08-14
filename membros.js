@@ -58,15 +58,21 @@
         const x1 = count > 1 ? startX + (usableWidth * i) / (count - 1) : startX + usableWidth / 2;
         const x2 = entry.toRect.left + entry.toRect.width / 2 - chartRect.left;
         const y2 = entry.toRect.top - chartRect.top;
-        const midY = (y1 + y2) / 2;
+        // curva assimétrica (em vez de um cotovelo reto vertical) — o
+        // controle desliza um pouco na horizontal também, então a linha
+        // sai em diagonal suave, mais raiz/vinha do que cano de cano
+        const dx = x2 - x1;
+        const dy = y2 - y1;
+        const c1x = x1 + dx * 0.15;
+        const c1y = y1 + dy * 0.35;
+        const c2x = x2 - dx * 0.15;
+        const c2y = y1 + dy * 0.65;
 
         const path = document.createElementNS(SVG_NS, 'path');
-        path.setAttribute('d', 'M ' + x1 + ' ' + y1 + ' C ' + x1 + ' ' + midY + ', ' + x2 + ' ' + midY + ', ' + x2 + ' ' + y2);
-        path.setAttribute('fill', 'none');
-        path.setAttribute('stroke', 'var(--gold-4)');
-        path.setAttribute('stroke-width', '2');
-        path.setAttribute('stroke-dasharray', '5 5');
-        path.setAttribute('opacity', '0.6');
+        path.setAttribute('d', 'M ' + x1 + ' ' + y1 + ' C ' + c1x + ' ' + c1y + ', ' + c2x + ' ' + c2y + ', ' + x2 + ' ' + y2);
+        path.setAttribute('class', 'org-line');
+        path.dataset.from = recruiterId;
+        path.dataset.to = entry.node.id;
         svg.appendChild(path);
       });
     });
@@ -95,9 +101,59 @@
     });
   }
 
+  // ao passar o mouse (ou focar, pelo teclado) numa pessoa, os fios que
+  // ligam ela a quem a chamou E a quem ela chamou brilham, e o resto
+  // apaga — assim dá pra seguir uma ligação específica sem se perder
+  // no emaranhado de todas as outras ao mesmo tempo
+  let currentActiveId = null;
+  function setActiveNode(id) {
+    currentActiveId = id;
+    const paths = svg.querySelectorAll('path');
+    const related = new Set(id ? [id] : []);
+    paths.forEach((p) => {
+      const isRelated = !!id && (p.dataset.from === id || p.dataset.to === id);
+      p.classList.toggle('org-line-active', isRelated);
+      p.classList.toggle('org-line-dim', !!id && !isRelated);
+      if (isRelated) {
+        related.add(p.dataset.from);
+        related.add(p.dataset.to);
+      }
+    });
+    chart.querySelectorAll('.member-chip-linked').forEach((c) => c.classList.remove('member-chip-linked'));
+    related.forEach((rid) => {
+      const node = document.getElementById(rid);
+      const chip = node && node.querySelector('.member-chip');
+      if (chip) chip.classList.add('member-chip-linked');
+    });
+  }
+
+  // liga o hover/foco uma única vez (os elementos com id não são
+  // recriados a cada redraw, só os <path> — só as linhas precisam ser
+  // religadas, e isso já é resolvido lendo data-from/data-to direto
+  // do DOM a cada chamada de setActiveNode, sem guardar referências)
+  function wireInteractivity() {
+    const nodes = chart.querySelectorAll('.member-node[id]');
+    nodes.forEach((node) => {
+      if (node.dataset.hoverWired) return;
+      node.dataset.hoverWired = '1';
+      node.tabIndex = 0;
+      node.addEventListener('mouseenter', () => setActiveNode(node.id));
+      node.addEventListener('mouseleave', () => setActiveNode(null));
+      node.addEventListener('focus', () => setActiveNode(node.id));
+      node.addEventListener('blur', () => setActiveNode(null));
+    });
+  }
+
   function refresh() {
     draw();
     labelRecruiters();
+    wireInteractivity();
+    // se alguém estava com o mouse/foco em cima de uma pessoa quando o
+    // redraw aconteceu (resize, troca de idioma, fonte terminando de
+    // carregar...), os <path> antigos foram recriados do zero e
+    // perderam as classes de destaque — reaplica pro id que já estava
+    // ativo, senão o brilho "trava desligado" até o mouse sair e voltar
+    if (currentActiveId) setActiveNode(currentActiveId);
   }
 
   // redesenha depois de qualquer coisa que possa mudar o layout: resize

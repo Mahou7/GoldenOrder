@@ -68,130 +68,149 @@
        Pra adicionar alguém: um <div class="member-node" id="m-NOVO">
        dentro do .tier-row do cargo certo, com data-recruiter="m-QUEM-CHAMOU"
        apontando pro id de quem chamou essa pessoa (Mahou não tem
-       data-recruiter, é a raiz) — e adicionar o mesmo par [de, para]
-       no array EDGES no topo de membros.js. -->
+       data-recruiter, é a raiz), e o nome dentro de um <span class="member-name">
+       (é esse span que recebe a cor/gradiente do cargo, ver membros.css) —
+       e adicionar o mesmo par [de, para] no array EDGES no topo de membros.js.
+       Cada .org-tier tem uma classe rank-* (ex.: rank-leader, rank-sworn)
+       que define a cor daquele cargo (--rank-c1/--rank-c2 em membros.css,
+       a mesma cor do cargo no Discord) — o título da fileira e o nome de
+       cada pessoa nela usam essa cor automaticamente. -->
   <div class="org-chart" id="orgChart">
     <svg class="org-lines" id="orgLines" aria-hidden="true"></svg>
 
-    <div class="org-tier">
+    <div class="org-tier rank-leader">
       <p class="org-tier-label" data-i18n="rank.leader">Líder</p>
       <div class="tier-row">
         <div class="member-node" id="m-mahou">
-          <span class="member-chip member-chip-lead">Mahou</span>
+          <span class="member-chip member-chip-lead"><span class="member-name">Mahou</span></span>
         </div>
       </div>
     </div>
 
-    <div class="org-tier">
+    <div class="org-tier rank-coleader">
       <p class="org-tier-label" data-i18n="rank.coleader">Co-líder</p>
       <div class="tier-row">
         <div class="member-node" id="m-radyzinn" data-recruiter="m-mahou">
-          <span class="member-chip member-chip-lead">Radyzinn</span>
+          <span class="member-chip member-chip-lead"><span class="member-name">Radyzinn</span></span>
         </div>
         <div class="member-node" id="m-gatti" data-recruiter="m-mahou">
-          <span class="member-chip member-chip-lead">Gatti</span>
+          <span class="member-chip member-chip-lead"><span class="member-name">Gatti</span></span>
         </div>
         <div class="member-node" id="m-bruno5025" data-recruiter="m-mahou">
-          <span class="member-chip member-chip-lead member-chip-ex">Bruno5025</span>
+          <span class="member-chip member-chip-lead member-chip-ex"><span class="member-name">Bruno5025</span></span>
           <span class="member-ex-tag" data-i18n="member.exGuild">Não está mais na guilda</span>
         </div>
         <div class="member-node" id="m-lucxyz" data-recruiter="m-mahou">
-          <span class="member-chip member-chip-lead member-chip-ex">LucXYZ</span>
+          <span class="member-chip member-chip-lead member-chip-ex"><span class="member-name">LucXYZ</span></span>
           <span class="member-ex-tag" data-i18n="member.exGuild">Não está mais na guilda</span>
         </div>
       </div>
     </div>
 
-    <div class="org-tier">
-      <p class="org-tier-label" data-i18n="rank.tier.masters">Mestres</p>
+    <div class="org-tier rank-master-artisan">
+      <p class="org-tier-label" data-i18n="rank.masterArtisan">Artífice Mestre</p>
       <div class="tier-row">
-        <div class="member-node" id="m-nisaka" data-recruiter="m-mahou">
-          <span class="member-chip">Nisaka</span>
-          <span class="member-rank" data-i18n="rank.grandMaster">Grão Mestre</span>
-        </div>
         <div class="member-node" id="m-rik001" data-recruiter="m-mahou">
-          <span class="member-chip">Rik_001</span>
-          <span class="member-rank" data-i18n="rank.masterArtisan">Artífice Mestre</span>
-        </div>
-        <div class="member-node" id="m-andy" data-recruiter="m-mahou">
-          <span class="member-chip">Andy</span>
-          <span class="member-rank" data-i18n="rank.master">Mestre</span>
+          <span class="member-chip"><span class="member-name">Rik_001</span></span>
         </div>
       </div>
     </div>
 
-    <div class="org-tier">
+    <div class="org-tier rank-grand-master">
+      <p class="org-tier-label" data-i18n="rank.grandMaster">Grão Mestre</p>
+      <div class="tier-row">
+        <div class="member-node" id="m-nisaka" data-recruiter="m-mahou">
+          <span class="member-chip"><span class="member-name">Nisaka</span></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="org-tier rank-master">
+      <p class="org-tier-label" data-i18n="rank.master">Mestre</p>
+      <div class="tier-row">
+        <div class="member-node" id="m-andy" data-recruiter="m-mahou">
+          <span class="member-chip"><span class="member-name">Andy</span></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="org-tier rank-artisan">
+      <p class="org-tier-label" data-i18n="rank.artisan">Artífice</p>
+      <p class="tier-empty-note" data-i18n="rank.emptyNotice">Nenhum membro nesse cargo ainda</p>
+    </div>
+
+    <div class="org-tier rank-consecrated">
       <p class="org-tier-label" data-i18n="rank.consecrated">Consagrado</p>
       <div class="tier-row">
         <div class="member-node" id="m-sandryzz" data-recruiter="m-mahou">
-          <span class="member-chip">Sandryzz</span>
+          <span class="member-chip"><span class="member-name">Sandryzz</span></span>
         </div>
       </div>
     </div>
 
-    <div class="org-tier">
+    <div class="org-tier rank-sworn">
       <p class="org-tier-label" data-i18n="rank.sworn">Juramentado</p>
       <div class="tier-row">
         <div class="member-node" id="m-hyper" data-recruiter="m-radyzinn">
-          <span class="member-chip">Hyper</span>
+          <span class="member-chip"><span class="member-name">Hyper</span></span>
         </div>
         <div class="member-node" id="m-doge" data-recruiter="m-gatti">
-          <span class="member-chip">Doge</span>
+          <span class="member-chip"><span class="member-name">Doge</span></span>
         </div>
         <div class="member-node" id="m-natanpis8" data-recruiter="m-mahou">
-          <span class="member-chip">Natanpis8</span>
+          <span class="member-chip"><span class="member-name">Natanpis8</span></span>
         </div>
         <div class="member-node" id="m-xamineh" data-recruiter="m-mahou">
-          <span class="member-chip">Xamineh</span>
+          <span class="member-chip"><span class="member-name">Xamineh</span></span>
         </div>
         <div class="member-node" id="m-maandy" data-recruiter="m-gatti">
-          <span class="member-chip member-chip-ex">Maandy</span>
+          <span class="member-chip member-chip-ex"><span class="member-name">Maandy</span></span>
           <span class="member-rank" data-i18n="rank.swornFem">Juramentada</span>
           <span class="member-ex-tag" data-i18n="member.exGuild">Não está mais na guilda</span>
         </div>
         <div class="member-node" id="m-kimooy" data-recruiter="m-gatti">
-          <span class="member-chip member-chip-ex">Kimooy</span>
+          <span class="member-chip member-chip-ex"><span class="member-name">Kimooy</span></span>
           <span class="member-ex-tag" data-i18n="member.exGuild">Não está mais na guilda</span>
         </div>
         <div class="member-node" id="m-oceanusolor" data-recruiter="m-mahou">
-          <span class="member-chip member-chip-ex">oceanusolor</span>
+          <span class="member-chip member-chip-ex"><span class="member-name">oceanusolor</span></span>
           <span class="member-ex-tag" data-i18n="member.exGuild">Não está mais na guilda</span>
         </div>
         <div class="member-node" id="m-liffers" data-recruiter="m-mahou">
-          <span class="member-chip member-chip-ex">Liffers</span>
+          <span class="member-chip member-chip-ex"><span class="member-name">Liffers</span></span>
           <span class="member-ex-tag" data-i18n="member.exGuild">Não está mais na guilda</span>
         </div>
       </div>
     </div>
 
-    <div class="org-tier">
+    <div class="org-tier rank-recruit">
       <p class="org-tier-label" data-i18n="rank.recruit">Recruta</p>
       <div class="tier-row">
         <div class="member-node member-node-couple">
           <div class="member-node" id="m-tinylung" data-recruiter="m-mahou">
-            <span class="member-chip">Tinylung</span>
+            <span class="member-chip"><span class="member-name">Tinylung</span></span>
           </div>
           <span class="couple-heart" data-i18n-aria-label="member.couple" aria-label="Casal">♥</span>
           <div class="member-node" id="m-atlas" data-recruiter="m-mahou">
-            <span class="member-chip">Atlas</span>
+            <span class="member-chip"><span class="member-name">Atlas</span></span>
           </div>
         </div>
         <div class="member-node" id="m-miwendo" data-recruiter="m-radyzinn">
-          <span class="member-chip">Miwendo</span>
+          <span class="member-chip"><span class="member-name">Miwendo</span></span>
         </div>
         <div class="member-node" id="m-musashi" data-recruiter="m-nisaka">
-          <span class="member-chip">Musashi</span>
+          <span class="member-chip"><span class="member-name">Musashi</span></span>
         </div>
         <div class="member-node" id="m-pedro" data-recruiter="m-andy">
-          <span class="member-chip member-chip-ex">Pedro</span>
+          <span class="member-chip member-chip-ex"><span class="member-name">Pedro</span></span>
           <span class="member-ex-tag" data-i18n="member.exGuild">Não está mais na guilda</span>
         </div>
         <div class="member-node" id="m-mejdalani" data-recruiter="m-gatti">
-          <span class="member-chip member-chip-ex">Mejdalani</span>
+          <span class="member-chip member-chip-ex"><span class="member-name">Mejdalani</span></span>
           <span class="member-ex-tag" data-i18n="member.exGuild">Não está mais na guilda</span>
         </div>
         <div class="member-node" id="m-xssul" data-recruiter="m-gatti">
-          <span class="member-chip member-chip-ex">Xssul</span>
+          <span class="member-chip member-chip-ex"><span class="member-name">Xssul</span></span>
           <span class="member-ex-tag" data-i18n="member.exGuild">Não está mais na guilda</span>
         </div>
       </div>

@@ -92,6 +92,107 @@
   gap:16px 22px;
 }
 
+/* cargo sem ninguém no momento (ex.: Artífice) — sem chip nenhum, só um
+   aviso discreto, já que não há card pra desenhar nem linha pra ligar */
+.tier-empty-note{
+  margin:0;
+  font-size:0.95rem;
+  font-style:italic;
+  color:var(--ink-dim);
+  opacity:0.7;
+}
+
+/* linhas do organograma (path desenhado por membros.js): descansam bem
+   discretas — pra não emaranhar visualmente com 23 delas na tela ao
+   mesmo tempo — e brilham só quando alguém passa o mouse/foca numa
+   pessoa ligada a elas (ver .org-line-active/.org-line-dim, aplicadas
+   por setActiveNode() em membros.js) */
+.org-line{
+  fill:none;
+  stroke:var(--gold-5);
+  stroke-width:1.5;
+  stroke-dasharray:5 5;
+  opacity:0.4;
+  transition:opacity 0.2s ease, stroke-width 0.2s ease, stroke 0.2s ease;
+}
+.org-line-active{
+  stroke:var(--gold-2);
+  stroke-width:2.5;
+  opacity:1;
+  filter:drop-shadow(0 0 3px rgba(255,207,63,0.7));
+}
+.org-line-dim{
+  opacity:0.06;
+}
+
+/* ---------- identidade de cor por cargo ----------
+   Mesma cor usada no cargo de cada um lá no Discord, replicada aqui:
+   cada cargo tem seu próprio gradiente de duas cores (--rank-c1 escura
+   → --rank-c2 clara), aplicado no nome de quem tem aquele cargo e no
+   título da fileira — a mesma técnica de texto-com-gradiente já usada
+   no nome do remetente na carta de convite (ver .card-sender em
+   style.css), só que uma cor por cargo em vez de dourado único. A
+   borda do card e o brilho ao redor dela (.member-chip / .member-chip-lead)
+   também pegam um toque da cor do cargo, tipo borda de raridade de
+   item do Minecraft. */
+.org-tier.rank-leader{
+  --rank-c1:#e47a1d; --rank-c2:#fad172; --rank-glow:rgba(228,122,29,0.35);
+}
+.org-tier.rank-coleader{
+  --rank-c1:#9b8666; --rank-c2:#ffe1b4; --rank-glow:rgba(155,134,102,0.35);
+}
+.org-tier.rank-master-artisan{
+  --rank-c1:#ff5dd6; --rank-c2:#ff9cbf; --rank-glow:rgba(255,93,214,0.35);
+}
+.org-tier.rank-grand-master{
+  --rank-c1:#9e6bff; --rank-c2:#9fc1ff; --rank-glow:rgba(158,107,255,0.35);
+}
+.org-tier.rank-master{
+  --rank-c1:#4cadd0; --rank-c2:#b2f9ff; --rank-glow:rgba(76,173,208,0.35);
+}
+.org-tier.rank-artisan{
+  --rank-c1:#ff5dd6; --rank-c2:#ff9cbf; --rank-glow:rgba(255,93,214,0.35);
+}
+.org-tier.rank-consecrated{
+  --rank-c1:#aa3b3b; --rank-c2:#ff4848; --rank-glow:rgba(170,59,59,0.35);
+}
+.org-tier.rank-sworn{
+  --rank-c1:#369876; --rank-c2:#71ff9e; --rank-glow:rgba(54,152,118,0.35);
+}
+.org-tier.rank-recruit{
+  --rank-c1:#8799ae; --rank-c2:#f1f7ff; --rank-glow:rgba(135,153,174,0.35);
+}
+
+.org-tier[class*="rank-"] > .org-tier-label{
+  background:linear-gradient(180deg, var(--rank-c1) 0%, var(--rank-c2) 100%);
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+  filter:drop-shadow(1px 1px 0 rgba(0,0,0,0.65));
+}
+
+.org-tier[class*="rank-"] .member-name{
+  background:linear-gradient(180deg, var(--rank-c1) 0%, var(--rank-c2) 100%);
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+  filter:drop-shadow(1px 1px 0 rgba(0,0,0,0.65));
+}
+
+.org-tier[class*="rank-"] .member-chip{
+  border-color:var(--rank-c1);
+  box-shadow:
+    inset 2px 2px 0 0 rgba(255,246,201,0.12),
+    inset -2px -2px 0 0 rgba(0,0,0,0.5),
+    0 0 0 2px var(--rank-glow);
+}
+.org-tier[class*="rank-"] .member-chip-lead{
+  box-shadow:
+    inset 2px 2px 0 0 rgba(255,246,201,0.2),
+    inset -2px -2px 0 0 rgba(0,0,0,0.5),
+    0 0 0 3px var(--rank-glow);
+}
+
 .member-node{
   position:relative;
   z-index:1;
@@ -99,6 +200,21 @@
   flex-direction:column;
   align-items:center;
   gap:5px;
+  border-radius:2px;
+}
+.member-node:focus-visible{
+  outline:3px solid var(--gold-2);
+  outline-offset:4px;
+}
+/* chip de quem está diretamente ligado à pessoa em foco/hover (ela
+   mesma, quem a chamou, e quem ela chamou) — reforça a linha que já
+   brilhou, deixando claro que aquele card faz parte da ligação */
+.member-chip-linked{
+  border-color:var(--gold-2) !important;
+  box-shadow:
+    inset 2px 2px 0 0 rgba(255,246,201,0.2),
+    inset -2px -2px 0 0 rgba(0,0,0,0.5),
+    0 0 8px rgba(255,207,63,0.5) !important;
 }
 
 .member-chip{
