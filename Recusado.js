@@ -85,12 +85,14 @@ const DISCORD_WEBHOOK_URL = 'https://discord.com/api/webhooks/153760574124511244
   // "Voltar" no aviso: desiste e volta pro formulário, mantendo o nick
   // já digitado
   warnBackBtn.addEventListener('click', () => {
+    if (window.GoldenOrderSound) window.GoldenOrderSound.play('tap');
     stepWarn.hidden = true;
     step1.hidden = false;
   });
 
   // "Sim, Recusar": só agora, de fato, dispara o aviso no Discord
   warnConfirmBtn.addEventListener('click', () => {
+    if (window.GoldenOrderSound) window.GoldenOrderSound.play('decline');
     const nick = nickInput.value.trim();
     warnConfirmBtn.disabled = true;
     warnBackBtn.disabled = true;

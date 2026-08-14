@@ -1,3 +1,10 @@
+// toca um efeito sonoro retrô, se o módulo existir e o som estiver
+// ligado (ver sound.js — ele mesmo decide se toca ou não, então isso
+// aqui é só uma chamada segura mesmo se sound.js não tiver carregado)
+function playSound(name) {
+  if (window.GoldenOrderSound) window.GoldenOrderSound.play(name);
+}
+
 // --- floating pixel embers ---
   const particleHost = document.getElementById('particles');
   const EMBER_COUNT = 18; // fewer particles = smoother on lower-end devices
@@ -26,6 +33,7 @@
   function revealMain(){
     if (revealed) return;
     revealed = true;
+    playSound('tap');
     intro.classList.add('hide');
     main.classList.add('reveal');
   }
@@ -109,6 +117,7 @@
 
     cardClosed.addEventListener('click', () => {
       cardClosed.classList.add('opening');
+      playSound('open');
       spawnSealBurst();
       cardReveal.classList.add('open');
       cardClosed.setAttribute('aria-expanded', 'true');
@@ -118,6 +127,22 @@
       window.setTimeout(() => {
         sealWrap.style.display = 'none';
       }, prefersReducedMotion ? 0 : 320);
+    });
+  })();
+
+  // --- toca um blip antes de ir pra questionario.html/recusado.html —
+  // como um <a> normalmente navega na hora, sem isso o som mal começa
+  // e a página já trocou; aqui a navegação espera o tempinho do blip ---
+  (function wireCardActionSounds() {
+    document.querySelectorAll('.card-actions a').forEach((link) => {
+      link.addEventListener('click', (e) => {
+        if (!window.GoldenOrderSound || window.GoldenOrderSound.isMuted()) return;
+        e.preventDefault();
+        const href = link.getAttribute('href');
+        const isAccept = href.indexOf('questionario') !== -1;
+        playSound(isAccept ? 'confirm' : 'decline');
+        window.setTimeout(() => { window.location.href = href; }, 160);
+      });
     });
   })();
 

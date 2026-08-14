@@ -1,16 +1,126 @@
-/* Golden Order — desenha as linhas do organograma de membros.
-   O HTML/CSS já funciona sem isso (cada card do organograma existe e
-   é legível de qualquer jeito); isto aqui é só a camada visual extra
-   que liga cada pessoa ao card de quem a recrutou, lendo o atributo
-   data-recruiter="id-de-quem-chamou" de cada .member-node e desenhando
-   uma curva entre os dois chips num <svg> posicionado por cima dos
-   cards (mas atrás deles, via z-index — ver membros.css). */
+/* Golden Order — monta e desenha o organograma de membros.
+   Duas partes: (1) renderFromData() constrói os cards a partir da
+   lista em members-data.js — pra adicionar/remover/mudar alguém, é só
+   editar aquele arquivo, nada aqui precisa mudar; (2) o resto deste
+   arquivo desenha por cima as linhas de "quem chamou quem", lendo o
+   atributo data-recruiter="id-de-quem-chamou" que renderFromData()
+   coloca em cada .member-node, com uma curva entre os dois chips num
+   <svg> posicionado por cima dos cards (mas atrás deles, via z-index
+   — ver membros.css). */
 (function () {
   const chart = document.getElementById('orgChart');
   const svg = document.getElementById('orgLines');
   if (!chart || !svg) return;
 
   const SVG_NS = 'http://www.w3.org/2000/svg';
+
+  function t(key) {
+    return window.GoldenOrderI18n ? window.GoldenOrderI18n.t(key) : key;
+  }
+
+  // constrói toda a árvore (fileiras por cargo + cards de cada pessoa)
+  // a partir de window.GoldenOrderMembers (ver members-data.js). Roda
+  // uma única vez, no carregamento — depois disso os cards já existem
+  // no DOM e só as linhas/traduções são atualizadas (ver refresh()).
+  function renderFromData() {
+    const data = window.GoldenOrderMembers;
+    if (!data || !Array.isArray(data.RANKS) || !Array.isArray(data.MEMBERS)) return;
+
+    const byRank = new Map();
+    data.RANKS.forEach((r) => byRank.set(r.key, []));
+    data.MEMBERS.forEach((m) => {
+      if (byRank.has(m.rank)) byRank.get(m.rank).push(m);
+    });
+
+    // quem é "par" de outra pessoa (couple) não vira um .member-node
+    // solto na fileira — é desenhado junto do par, ver abaixo
+    const coupleTargets = new Set(data.MEMBERS.filter((m) => m.couple).map((m) => m.couple));
+    const byId = new Map(data.MEMBERS.map((m) => [m.id, m]));
+
+    function buildMemberNode(m, lead) {
+      const node = document.createElement('div');
+      node.className = 'member-node';
+      node.id = 'm-' + m.id;
+      if (m.recruiter) node.dataset.recruiter = 'm-' + m.recruiter;
+
+      const chip = document.createElement('span');
+      chip.className = 'member-chip';
+      if (lead) chip.classList.add('member-chip-lead');
+      if (m.ex) chip.classList.add('member-chip-ex');
+
+      const nameSpan = document.createElement('span');
+      nameSpan.className = 'member-name';
+      nameSpan.textContent = m.name;
+      chip.appendChild(nameSpan);
+      node.appendChild(chip);
+
+      if (m.rankLabelKey) {
+        const rankTag = document.createElement('span');
+        rankTag.className = 'member-rank';
+        rankTag.dataset.i18n = m.rankLabelKey;
+        rankTag.textContent = t(m.rankLabelKey);
+        node.appendChild(rankTag);
+      }
+      if (m.ex) {
+        const exTag = document.createElement('span');
+        exTag.className = 'member-ex-tag';
+        exTag.dataset.i18n = 'member.exGuild';
+        exTag.textContent = t('member.exGuild');
+        node.appendChild(exTag);
+      }
+      return node;
+    }
+
+    data.RANKS.forEach((rankDef) => {
+      const members = (byRank.get(rankDef.key) || []).filter((m) => !coupleTargets.has(m.id));
+
+      const tier = document.createElement('div');
+      tier.className = 'org-tier rank-' + rankDef.key;
+
+      const label = document.createElement('p');
+      label.className = 'org-tier-label';
+      label.dataset.i18n = rankDef.i18n;
+      label.textContent = t(rankDef.i18n);
+      tier.appendChild(label);
+
+      if (!members.length) {
+        // cargo sem ninguém no momento (ex.: Artífice) — aviso
+        // discreto no lugar da fileira de cards, ver .tier-empty-note
+        const note = document.createElement('p');
+        note.className = 'tier-empty-note';
+        note.dataset.i18n = 'rank.emptyNotice';
+        note.textContent = t('rank.emptyNotice');
+        tier.appendChild(note);
+      } else {
+        const row = document.createElement('div');
+        row.className = 'tier-row';
+        members.forEach((m) => {
+          if (m.couple) {
+            const wrap = document.createElement('div');
+            wrap.className = 'member-node member-node-couple';
+            wrap.appendChild(buildMemberNode(m, rankDef.lead));
+
+            const heart = document.createElement('span');
+            heart.className = 'couple-heart';
+            heart.dataset.i18nAriaLabel = 'member.couple';
+            heart.setAttribute('aria-label', t('member.couple'));
+            heart.textContent = '♥';
+            wrap.appendChild(heart);
+
+            const partner = byId.get(m.couple);
+            if (partner) wrap.appendChild(buildMemberNode(partner, rankDef.lead));
+
+            row.appendChild(wrap);
+          } else {
+            row.appendChild(buildMemberNode(m, rankDef.lead));
+          }
+        });
+        tier.appendChild(row);
+      }
+
+      chart.appendChild(tier);
+    });
+  }
 
   function draw() {
     // limpa o que tinha desenhado antes (redesenha do zero a cada chamada)
@@ -160,7 +270,11 @@
   // da janela (debounced), troca de idioma (textos com tamanhos
   // diferentes reorganizam os cards, e a legenda escondida também
   // precisa trocar de idioma) e o carregamento final da fonte (a Press
-  // Start 2P via Google Fonts pode trocar depois do 1º layout)
+  // Start 2P via Google Fonts pode trocar depois do 1º layout). Note
+  // que só refresh() roda nesses eventos, não renderFromData() de
+  // novo — os cards já existem, só as linhas/traduções precisam
+  // acompanhar (a troca de idioma em si já é tratada pelo próprio
+  // i18n.js, que re-varre todo [data-i18n] da página, cards incluídos).
   let resizeTimer = null;
   window.addEventListener('resize', () => {
     clearTimeout(resizeTimer);
@@ -172,9 +286,16 @@
     document.fonts.ready.then(() => setTimeout(refresh, 30));
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', refresh);
-  } else {
+  // renderFromData() monta os cards uma única vez, no carregamento;
+  // refresh() então desenha as linhas por cima deles pela 1ª vez
+  function init() {
+    renderFromData();
     refresh();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
   }
 })();

@@ -49,6 +49,9 @@
       'settings.theme': 'Tema',
       'settings.dark': 'Escuro',
       'settings.light': 'Claro',
+      'settings.sound': 'Som',
+      'settings.soundOn': 'Ativado',
+      'settings.soundOff': 'Desativado',
       'settings.close': 'Fechar',
 
       'doc.title.index': 'Golden Order — Convite',
@@ -70,6 +73,8 @@
       'modal.email.text': 'Seu app de e-mail deve abrir com a confirmação pronta — é só clicar em enviar. Se nada abrir, copie o resumo abaixo e envie manualmente.',
       'modal.error.title': 'ALGO DEU ERRADO',
       'modal.error.text': 'O envio automático falhou. Copie o resumo abaixo e cole no Discord da Golden Order — ninguém vai perder sua confirmação por isso.',
+      'achievement.title': 'Conquista desbloqueada',
+      'achievement.body': 'Membro da Golden Order',
       'form.note.error': 'Não deu pra enviar agora. Copie o resumo abaixo e envie pelo Discord do clã.',
       'modal.copy': 'Copiar resumo',
       'modal.copied': 'Copiado!',
@@ -132,6 +137,9 @@
       'settings.theme': 'Theme',
       'settings.dark': 'Dark',
       'settings.light': 'Light',
+      'settings.sound': 'Sound',
+      'settings.soundOn': 'On',
+      'settings.soundOff': 'Off',
       'settings.close': 'Close',
 
       'doc.title.index': 'Golden Order — Invite',
@@ -153,6 +161,8 @@
       'modal.email.text': 'Your email app should open with the confirmation ready — just hit send. If nothing opens, copy the summary below and send it manually.',
       'modal.error.title': 'SOMETHING WENT WRONG',
       'modal.error.text': "The automatic submission failed. Copy the summary below and paste it into the Golden Order's Discord — your confirmation won't be lost.",
+      'achievement.title': 'Achievement unlocked',
+      'achievement.body': 'Member of the Golden Order',
       'form.note.error': "Couldn't send it right now. Copy the summary below and send it through the clan's Discord.",
       'modal.copy': 'Copy summary',
       'modal.copied': 'Copied!',
@@ -215,6 +225,9 @@
       'settings.theme': 'Tema',
       'settings.dark': 'Oscuro',
       'settings.light': 'Claro',
+      'settings.sound': 'Sonido',
+      'settings.soundOn': 'Activado',
+      'settings.soundOff': 'Desactivado',
       'settings.close': 'Cerrar',
 
       'doc.title.index': 'Golden Order — Invitación',
@@ -236,6 +249,8 @@
       'modal.email.text': 'Tu app de correo debería abrirse con la confirmación lista — solo tienes que enviarla. Si no se abre nada, copia el resumen de abajo y envíalo manualmente.',
       'modal.error.title': 'ALGO SALIÓ MAL',
       'modal.error.text': 'El envío automático falló. Copia el resumen de abajo y pégalo en el Discord de la Golden Order — tu confirmación no se perderá.',
+      'achievement.title': 'Logro desbloqueado',
+      'achievement.body': 'Miembro de la Golden Order',
       'form.note.error': 'No se pudo enviar ahora. Copia el resumen de abajo y envíalo por el Discord del clan.',
       'modal.copy': 'Copiar resumen',
       'modal.copied': '¡Copiado!',
@@ -331,6 +346,22 @@
     });
   }
 
+  // o som em si (tocar/sintetizar os blips) mora num arquivo à parte
+  // (sound.js, carregado antes deste) — aqui só sincroniza o estado
+  // "ligado/desligado" dos botões do painel de configurações com ele
+  function syncSoundButtons() {
+    const muted = window.GoldenOrderSound ? window.GoldenOrderSound.isMuted() : false;
+    document.querySelectorAll('.settings-option[data-sound]').forEach((el) => {
+      const wantsOn = el.getAttribute('data-sound') === 'on';
+      el.classList.toggle('active', wantsOn !== muted);
+    });
+  }
+  function setSound(on) {
+    if (!window.GoldenOrderSound) return;
+    window.GoldenOrderSound.setMuted(!on);
+    syncSoundButtons();
+  }
+
   // aplica o tema imediatamente (o <html> já recebeu um data-theme
   // "de emergência" via script inline no <head>, isso só garante que
   // fique coerente depois que este arquivo carrega) e o idioma assim
@@ -342,6 +373,7 @@
     document.querySelectorAll('.settings-option[data-theme]').forEach((el) => {
       el.classList.toggle('active', el.getAttribute('data-theme') === getTheme());
     });
+    syncSoundButtons();
   }
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', ready);
@@ -356,7 +388,10 @@
     const closeBtn = document.getElementById('settingsClose');
     if (!btn || !overlay) return;
 
-    function open() { overlay.classList.add('show'); }
+    function open() {
+      if (window.GoldenOrderSound) window.GoldenOrderSound.play('tap');
+      overlay.classList.add('show');
+    }
     function close() { overlay.classList.remove('show'); }
 
     btn.addEventListener('click', open);
@@ -371,6 +406,9 @@
     });
     overlay.querySelectorAll('.settings-option[data-theme]').forEach((el) => {
       el.addEventListener('click', () => setTheme(el.getAttribute('data-theme')));
+    });
+    overlay.querySelectorAll('.settings-option[data-sound]').forEach((el) => {
+      el.addEventListener('click', () => setSound(el.getAttribute('data-sound') === 'on'));
     });
   }
   if (document.readyState === 'loading') {

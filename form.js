@@ -90,6 +90,32 @@ const CONFIG = {
     modalOverlay.classList.add('show');
   }
 
+  // toast estilo "conquista desbloqueada" (advancement do Minecraft),
+  // puramente decorativo — some sozinho depois de alguns segundos. A
+  // confirmação em si já está garantida pelo modal, que não depende
+  // disso pra funcionar.
+  function showAchievementToast() {
+    const toast = document.createElement('div');
+    toast.className = 'achievement-toast';
+    toast.setAttribute('role', 'status');
+    toast.innerHTML =
+      '<span class="achievement-toast-icon" aria-hidden="true">★</span>' +
+      '<span class="achievement-toast-text">' +
+      '<p class="achievement-toast-title"></p>' +
+      '<p class="achievement-toast-body"></p>' +
+      '</span>';
+    toast.querySelector('.achievement-toast-title').textContent = t('achievement.title', 'Conquista desbloqueada');
+    toast.querySelector('.achievement-toast-body').textContent = t('achievement.body', 'Membro da Golden Order');
+    document.body.appendChild(toast);
+
+    window.requestAnimationFrame(() => toast.classList.add('show'));
+    window.setTimeout(() => {
+      toast.classList.remove('show');
+      toast.addEventListener('transitionend', () => toast.remove(), { once: true });
+      window.setTimeout(() => toast.remove(), 600); // rede de segurança se a transição não disparar
+    }, 3800);
+  }
+
   modalClose.addEventListener('click', () => modalOverlay.classList.remove('show'));
   modalOverlay.addEventListener('click', (e) => {
     if (e.target === modalOverlay) modalOverlay.classList.remove('show');
@@ -151,6 +177,8 @@ const CONFIG = {
     try {
       if (usingWebhook) {
         await sendToDiscord(data, summary);
+        if (window.GoldenOrderSound) window.GoldenOrderSound.play('success');
+        showAchievementToast();
         openModal({
           title: t('modal.success.title', 'CONVITE CONFIRMADO!'),
           text: t('modal.success.text', 'Sua confirmação chegou até a Golden Order. Fique de olho no Discord — alguém do clã vai te chamar em breve.'),
@@ -161,6 +189,7 @@ const CONFIG = {
       } else {
         // sem webhook configurado: abre o e-mail do usuário já preenchido
         sendByEmail(data, summary);
+        if (window.GoldenOrderSound) window.GoldenOrderSound.play('confirm');
         openModal({
           title: t('modal.email.title', 'QUASE LÁ!'),
           text: t('modal.email.text', 'Seu app de e-mail deve abrir com a confirmação pronta — é só clicar em enviar. Se nada abrir, copie o resumo abaixo e envie manualmente.'),
@@ -170,6 +199,7 @@ const CONFIG = {
         });
       }
     } catch (err) {
+      if (window.GoldenOrderSound) window.GoldenOrderSound.play('error');
       formNote.textContent = t('form.note.error', 'Não deu pra enviar agora. Copie o resumo abaixo e envie pelo Discord do clã.');
       formNote.classList.add('error');
       openModal({
