@@ -43,55 +43,40 @@
   color:var(--ink-dim);
 }
 
-/* ---------- hierarquia (escada de cargos, um trono central conectando
-   cada cargo ao próximo — encaixa melhor numa lista de cargos/patentes
-   do que uma árvore genealógica clássica, já que várias pessoas dividem
-   o mesmo cargo em vez de teREM uma relação direta de pai/filho) ---------- */
-.rank-ladder{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  width:100%;
-  max-width:820px;
-  margin:26px auto 0;
-}
-
-.rank-tier{
+/* ---------- organograma por cargo ----------
+   A posição de cada pessoa é o cargo dela (.org-tier, de cima pra
+   baixo — igual a hierarquia antiga). "Quem chamou quem" vira uma
+   linha desenhada por membros.js (um <svg> por cima dos cards, ligando
+   o chip de cada pessoa ao chip de quem a recrutou, usando os pares
+   data-recruiter="id-de-quem-chamou" do HTML) — bem mais compacto na
+   vertical do que uma árvore genealógica pura, já que várias pessoas
+   do mesmo cargo dividem a mesma linha. */
+.org-chart{
   position:relative;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:12px;
   width:100%;
-  padding:30px 0 0;
-}
-.rank-tier:first-child{ padding-top:0; }
-
-/* traço vertical + losango dourado ligando um cargo ao próximo,
-   reaproveitando o mesmo motivo do divisor .rule usado no resto do site */
-.rank-tier:not(:first-child)::before{
-  content:'';
-  position:absolute;
-  top:0;
-  left:50%;
-  width:0;
-  height:30px;
-  border-left:2px solid var(--gold-4);
-}
-.rank-tier:not(:first-child)::after{
-  content:'';
-  position:absolute;
-  top:11px;
-  left:50%;
-  width:9px;
-  height:9px;
-  transform:translate(-50%, -50%) rotate(45deg);
-  background:var(--gold-2);
-  box-shadow:0 0 0 2px #000;
+  max-width:920px;
+  margin:30px auto 0;
 }
 
-.rank-label{
-  margin:0;
+.org-lines{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  pointer-events:none;
+  z-index:0;
+  overflow:visible;
+}
+
+.org-tier{
+  position:relative;
+  z-index:1;
+  margin-bottom:34px;
+}
+.org-tier:last-child{ margin-bottom:0; }
+
+.org-tier-label{
+  margin:0 0 14px;
   font-family:'Press Start 2P', monospace;
   font-size:0.6rem;
   letter-spacing:0.08em;
@@ -99,11 +84,21 @@
   color:var(--gold-2);
 }
 
-.rank-members{
+.tier-row{
   display:flex;
   flex-wrap:wrap;
   justify-content:center;
-  gap:10px;
+  align-items:flex-start;
+  gap:16px 22px;
+}
+
+.member-node{
+  position:relative;
+  z-index:1;
+  display:inline-flex;
+  flex-direction:column;
+  align-items:center;
+  gap:5px;
 }
 
 .member-chip{
@@ -127,19 +122,68 @@
     inset -2px -2px 0 0 rgba(0,0,0,0.5),
     0 0 0 3px rgba(232,164,19,0.25);
 }
-.member-chip-empty{
-  background:transparent;
+/* quem já saiu da guilda continua no organograma (é um histórico de
+   quem trouxe quem, não só o time atual) — só fica visualmente
+   apagado, com borda tracejada em vez de sólida */
+.member-chip-ex{
+  opacity:0.5;
   border-style:dashed;
-  border-color:var(--gold-5);
-  color:var(--ink-dim);
-  font-style:italic;
-  font-size:0.95rem;
+  border-color:var(--ink-dim);
   box-shadow:none;
 }
 
+.member-rank{
+  font-family:'Press Start 2P', monospace;
+  font-size:0.5rem;
+  letter-spacing:0.05em;
+  text-transform:uppercase;
+  color:var(--gold-4);
+  white-space:nowrap;
+}
+
+.member-ex-tag{
+  font-size:0.85rem;
+  font-style:italic;
+  color:var(--ink-dim);
+  white-space:nowrap;
+}
+
+.member-node-couple{
+  flex-direction:row;
+  align-items:center;
+  gap:10px;
+}
+
+/* escondido visualmente, mas continua lido por leitor de tela — usado
+   pela legenda "chamado por X" que membros.js injeta em cada card
+   (a linha do organograma é reforço visual, essa frase é a
+   informação em si, ver membros.js) */
+.sr-only{
+  position:absolute;
+  width:1px;
+  height:1px;
+  padding:0;
+  margin:-1px;
+  overflow:hidden;
+  clip:rect(0,0,0,0);
+  white-space:nowrap;
+  border:0;
+}
+.couple-heart{
+  color:#e8746c;
+  font-size:1.1rem;
+  text-shadow:0 0 6px rgba(232,116,108,0.55);
+}
+
 @media (max-width:480px){
+  .tier-row{ gap:12px 14px; }
   .member-chip{ font-size:0.95rem; padding:9px 14px; }
   .member-chip-lead{ font-size:0.6rem; padding:12px 16px; }
+  .member-rank{ font-size:0.46rem; }
+}
+
+@media (prefers-reduced-motion: reduce), (prefers-contrast: more){
+  .org-lines{ display:none; }
 }
 
 @media (prefers-reduced-motion: reduce){

@@ -88,13 +88,17 @@
       'rank.leader': 'Líder',
       'rank.coleader': 'Co-líder',
       'rank.masterArtisan': 'Artífice Mestre',
-      'rank.artisan': 'Artífice',
+      'rank.master': 'Mestre',
+      'rank.tier.masters': 'Mestres',
       'rank.grandMaster': 'Grão Mestre',
       'rank.consecrated': 'Consagrado',
       'rank.sworn': 'Juramentado',
+      'rank.swornFem': 'Juramentada',
       'rank.recruit': 'Recruta',
-      'rank.emptyNotice': 'Nenhum membro nesse cargo ainda',
-      'tree.note': 'Essa é a estrutura da Golden Order — da liderança até quem entrou por último.'
+      'member.exGuild': 'Não está mais na guilda',
+      'member.calledBy': 'chamado por',
+      'member.couple': 'Casal',
+      'tree.note': 'Cada ligação mostra quem trouxe quem pra Golden Order.'
     },
 
     en: {
@@ -166,13 +170,17 @@
       'rank.leader': 'Leader',
       'rank.coleader': 'Co-Leader',
       'rank.masterArtisan': 'Master Artisan',
-      'rank.artisan': 'Artisan',
+      'rank.master': 'Master',
+      'rank.tier.masters': 'Masters',
       'rank.grandMaster': 'Grand Master',
       'rank.consecrated': 'Consecrated',
       'rank.sworn': 'Sworn',
+      'rank.swornFem': 'Sworn',
       'rank.recruit': 'Recruit',
-      'rank.emptyNotice': 'No members in this rank yet',
-      'tree.note': 'This is the structure of the Golden Order — from leadership down to the newest member.'
+      'member.exGuild': 'No longer in the guild',
+      'member.calledBy': 'called in by',
+      'member.couple': 'Couple',
+      'tree.note': 'Each link shows who brought whom into the Golden Order.'
     },
 
     es: {
@@ -244,13 +252,17 @@
       'rank.leader': 'Líder',
       'rank.coleader': 'Co-líder',
       'rank.masterArtisan': 'Artífice Maestro',
-      'rank.artisan': 'Artífice',
+      'rank.master': 'Maestro',
+      'rank.tier.masters': 'Maestros',
       'rank.grandMaster': 'Gran Maestro',
       'rank.consecrated': 'Consagrado',
       'rank.sworn': 'Jurado',
+      'rank.swornFem': 'Jurada',
       'rank.recruit': 'Recluta',
-      'rank.emptyNotice': 'Aún no hay miembros en este rango',
-      'tree.note': 'Esta es la estructura de la Golden Order — desde el liderazgo hasta el último en entrar.'
+      'member.exGuild': 'Ya no está en el clan',
+      'member.calledBy': 'invitado por',
+      'member.couple': 'Pareja',
+      'tree.note': 'Cada conexión muestra quién trajo a quién a la Golden Order.'
     }
   };
 
