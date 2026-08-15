@@ -21,6 +21,11 @@
 </head>
 <body data-i18n-doctitle="doc.title.membros">
 
+<!-- cobre a tela ANTES da primeira pintura (evita flash) — ver
+     pagefx.js e .page-wipe em style.css pra transição completa -->
+<div class="page-wipe" id="pageWipe" aria-hidden="true"></div>
+<script>document.getElementById('pageWipe').classList.add('cover');</script>
+
 <div class="bg-fixed"></div>
 <div id="particles"></div>
 <div class="vignette"></div>
@@ -50,6 +55,14 @@
         <button type="button" class="settings-option" data-theme="light" data-i18n="settings.light">Claro</button>
       </div>
     </div>
+
+    <div class="settings-group">
+      <p class="settings-label" data-i18n="settings.sound">Som</p>
+      <div class="settings-options">
+        <button type="button" class="settings-option" data-sound="on" data-i18n="settings.soundOn">Ativado</button>
+        <button type="button" class="settings-option" data-sound="off" data-i18n="settings.soundOff">Desativado</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -59,168 +72,25 @@
   <img class="logo-tree" src="logo.png" alt="Golden Order">
   <p class="kicker" data-i18n="membros.kicker">A Árvore da Ordem</p>
 
-  <!-- Organograma por cargo, com linhas (desenhadas via membros.js,
-       usando um <svg> por cima dos cards) ligando cada pessoa a quem
-       a chamou pra guilda. A hierarquia de cargos manda na posição
-       (cada .org-tier é um cargo, de cima pra baixo); "quem chamou
-       quem" vira as linhas + a etiqueta pequena embaixo do nome, que
-       funciona mesmo sem JavaScript (a linha é só reforço visual).
-       Pra adicionar alguém: um <div class="member-node" id="m-NOVO">
-       dentro do .tier-row do cargo certo, com data-recruiter="m-QUEM-CHAMOU"
-       apontando pro id de quem chamou essa pessoa (Mahou não tem
-       data-recruiter, é a raiz), e o nome dentro de um <span class="member-name">
-       (é esse span que recebe a cor/gradiente do cargo, ver membros.css) —
-       e adicionar o mesmo par [de, para] no array EDGES no topo de membros.js.
-       Cada .org-tier tem uma classe rank-* (ex.: rank-leader, rank-sworn)
-       que define a cor daquele cargo (--rank-c1/--rank-c2 em membros.css,
-       a mesma cor do cargo no Discord) — o título da fileira e o nome de
-       cada pessoa nela usam essa cor automaticamente. -->
+  <!-- Organograma por cargo: os cards de cada pessoa (e as linhas de
+       "quem chamou quem" desenhadas por cima, num <svg>) são montados
+       inteiramente pelo membros.js, a partir da lista em
+       members-data.js — pra adicionar, remover ou atualizar alguém,
+       edite SÓ o members-data.js (tem instruções detalhadas lá em
+       cima do arquivo); nada aqui neste HTML precisa mudar. Cada
+       cargo tem uma cor própria (igual ao cargo no Discord), definida
+       em membros.css numa classe .org-tier.rank-<key>. -->
   <div class="org-chart" id="orgChart">
     <svg class="org-lines" id="orgLines" aria-hidden="true"></svg>
-
-    <div class="org-tier rank-leader">
-      <p class="org-tier-label" data-i18n="rank.leader">Líder</p>
-      <div class="tier-row">
-        <div class="member-node" id="m-mahou">
-          <span class="member-chip member-chip-lead"><span class="member-name">Mahou</span></span>
-        </div>
-      </div>
-    </div>
-
-    <div class="org-tier rank-coleader">
-      <p class="org-tier-label" data-i18n="rank.coleader">Co-líder</p>
-      <div class="tier-row">
-        <div class="member-node" id="m-radyzinn" data-recruiter="m-mahou">
-          <span class="member-chip member-chip-lead"><span class="member-name">Radyzinn</span></span>
-        </div>
-        <div class="member-node" id="m-gatti" data-recruiter="m-mahou">
-          <span class="member-chip member-chip-lead"><span class="member-name">Gatti</span></span>
-        </div>
-        <div class="member-node" id="m-bruno5025" data-recruiter="m-mahou">
-          <span class="member-chip member-chip-lead member-chip-ex"><span class="member-name">Bruno5025</span></span>
-          <span class="member-ex-tag" data-i18n="member.exGuild">Não está mais na guilda</span>
-        </div>
-        <div class="member-node" id="m-lucxyz" data-recruiter="m-mahou">
-          <span class="member-chip member-chip-lead member-chip-ex"><span class="member-name">LucXYZ</span></span>
-          <span class="member-ex-tag" data-i18n="member.exGuild">Não está mais na guilda</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="org-tier rank-master-artisan">
-      <p class="org-tier-label" data-i18n="rank.masterArtisan">Artífice Mestre</p>
-      <div class="tier-row">
-        <div class="member-node" id="m-rik001" data-recruiter="m-mahou">
-          <span class="member-chip"><span class="member-name">Rik_001</span></span>
-        </div>
-      </div>
-    </div>
-
-    <div class="org-tier rank-grand-master">
-      <p class="org-tier-label" data-i18n="rank.grandMaster">Grão Mestre</p>
-      <div class="tier-row">
-        <div class="member-node" id="m-nisaka" data-recruiter="m-mahou">
-          <span class="member-chip"><span class="member-name">Nisaka</span></span>
-        </div>
-      </div>
-    </div>
-
-    <div class="org-tier rank-master">
-      <p class="org-tier-label" data-i18n="rank.master">Mestre</p>
-      <div class="tier-row">
-        <div class="member-node" id="m-andy" data-recruiter="m-mahou">
-          <span class="member-chip"><span class="member-name">Andy</span></span>
-        </div>
-      </div>
-    </div>
-
-    <div class="org-tier rank-artisan">
-      <p class="org-tier-label" data-i18n="rank.artisan">Artífice</p>
-      <p class="tier-empty-note" data-i18n="rank.emptyNotice">Nenhum membro nesse cargo ainda</p>
-    </div>
-
-    <div class="org-tier rank-consecrated">
-      <p class="org-tier-label" data-i18n="rank.consecrated">Consagrado</p>
-      <div class="tier-row">
-        <div class="member-node" id="m-sandryzz" data-recruiter="m-mahou">
-          <span class="member-chip"><span class="member-name">Sandryzz</span></span>
-        </div>
-      </div>
-    </div>
-
-    <div class="org-tier rank-sworn">
-      <p class="org-tier-label" data-i18n="rank.sworn">Juramentado</p>
-      <div class="tier-row">
-        <div class="member-node" id="m-hyper" data-recruiter="m-radyzinn">
-          <span class="member-chip"><span class="member-name">Hyper</span></span>
-        </div>
-        <div class="member-node" id="m-doge" data-recruiter="m-gatti">
-          <span class="member-chip"><span class="member-name">Doge</span></span>
-        </div>
-        <div class="member-node" id="m-natanpis8" data-recruiter="m-mahou">
-          <span class="member-chip"><span class="member-name">Natanpis8</span></span>
-        </div>
-        <div class="member-node" id="m-xamineh" data-recruiter="m-mahou">
-          <span class="member-chip"><span class="member-name">Xamineh</span></span>
-        </div>
-        <div class="member-node" id="m-maandy" data-recruiter="m-gatti">
-          <span class="member-chip member-chip-ex"><span class="member-name">Maandy</span></span>
-          <span class="member-rank" data-i18n="rank.swornFem">Juramentada</span>
-          <span class="member-ex-tag" data-i18n="member.exGuild">Não está mais na guilda</span>
-        </div>
-        <div class="member-node" id="m-kimooy" data-recruiter="m-gatti">
-          <span class="member-chip member-chip-ex"><span class="member-name">Kimooy</span></span>
-          <span class="member-ex-tag" data-i18n="member.exGuild">Não está mais na guilda</span>
-        </div>
-        <div class="member-node" id="m-oceanusolor" data-recruiter="m-mahou">
-          <span class="member-chip member-chip-ex"><span class="member-name">oceanusolor</span></span>
-          <span class="member-ex-tag" data-i18n="member.exGuild">Não está mais na guilda</span>
-        </div>
-        <div class="member-node" id="m-liffers" data-recruiter="m-mahou">
-          <span class="member-chip member-chip-ex"><span class="member-name">Liffers</span></span>
-          <span class="member-ex-tag" data-i18n="member.exGuild">Não está mais na guilda</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="org-tier rank-recruit">
-      <p class="org-tier-label" data-i18n="rank.recruit">Recruta</p>
-      <div class="tier-row">
-        <div class="member-node member-node-couple">
-          <div class="member-node" id="m-tinylung" data-recruiter="m-mahou">
-            <span class="member-chip"><span class="member-name">Tinylung</span></span>
-          </div>
-          <span class="couple-heart" data-i18n-aria-label="member.couple" aria-label="Casal">♥</span>
-          <div class="member-node" id="m-atlas" data-recruiter="m-mahou">
-            <span class="member-chip"><span class="member-name">Atlas</span></span>
-          </div>
-        </div>
-        <div class="member-node" id="m-miwendo" data-recruiter="m-radyzinn">
-          <span class="member-chip"><span class="member-name">Miwendo</span></span>
-        </div>
-        <div class="member-node" id="m-musashi" data-recruiter="m-nisaka">
-          <span class="member-chip"><span class="member-name">Musashi</span></span>
-        </div>
-        <div class="member-node" id="m-pedro" data-recruiter="m-andy">
-          <span class="member-chip member-chip-ex"><span class="member-name">Pedro</span></span>
-          <span class="member-ex-tag" data-i18n="member.exGuild">Não está mais na guilda</span>
-        </div>
-        <div class="member-node" id="m-mejdalani" data-recruiter="m-gatti">
-          <span class="member-chip member-chip-ex"><span class="member-name">Mejdalani</span></span>
-          <span class="member-ex-tag" data-i18n="member.exGuild">Não está mais na guilda</span>
-        </div>
-        <div class="member-node" id="m-xssul" data-recruiter="m-gatti">
-          <span class="member-chip member-chip-ex"><span class="member-name">Xssul</span></span>
-          <span class="member-ex-tag" data-i18n="member.exGuild">Não está mais na guilda</span>
-        </div>
-      </div>
-    </div>
   </div>
 
   <p class="tree-note" data-i18n="tree.note">Cada ligação mostra quem trouxe quem pra Golden Order.</p>
 </main>
 
+<script src="sound.js"></script>
+<script src="pagefx.js"></script>
 <script src="i18n.js"></script>
+<script src="members-data.js"></script>
 <script src="membros.js"></script>
 
 </body>

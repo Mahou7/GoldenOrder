@@ -21,6 +21,11 @@
 </head>
 <body data-i18n-doctitle="doc.title.questionario">
 
+<!-- cobre a tela ANTES da primeira pintura (evita flash) — ver
+     pagefx.js e .page-wipe em style.css pra transição completa -->
+<div class="page-wipe" id="pageWipe" aria-hidden="true"></div>
+<script>document.getElementById('pageWipe').classList.add('cover');</script>
+
 <div class="bg-fixed"></div>
 <div id="particles"></div>
 <div class="vignette"></div>
@@ -48,6 +53,14 @@
       <div class="settings-options">
         <button type="button" class="settings-option" data-theme="dark" data-i18n="settings.dark">Escuro</button>
         <button type="button" class="settings-option" data-theme="light" data-i18n="settings.light">Claro</button>
+      </div>
+    </div>
+
+    <div class="settings-group">
+      <p class="settings-label" data-i18n="settings.sound">Som</p>
+      <div class="settings-options">
+        <button type="button" class="settings-option" data-sound="on" data-i18n="settings.soundOn">Ativado</button>
+        <button type="button" class="settings-option" data-sound="off" data-i18n="settings.soundOff">Desativado</button>
       </div>
     </div>
   </div>
@@ -105,6 +118,8 @@
   </div>
 </div>
 
+<script src="sound.js"></script>
+<script src="pagefx.js"></script>
 <script src="i18n.js"></script>
 <script src="form.js"></script>
 

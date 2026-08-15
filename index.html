@@ -45,6 +45,11 @@
 </head>
 <body data-i18n-doctitle="doc.title.index">
 
+<!-- cobre a tela ANTES da primeira pintura (evita flash) — ver
+     pagefx.js e .page-wipe em style.css pra transição completa -->
+<div class="page-wipe" id="pageWipe" aria-hidden="true"></div>
+<script>document.getElementById('pageWipe').classList.add('cover');</script>
+
 <!-- ============================================================
      LOGO: a logo oficial da Golden Order enviada pelo usuário já
      está embutida abaixo (formato PNG, fundo transparente) como
@@ -101,6 +106,14 @@
         <button type="button" class="settings-option" data-theme="light" data-i18n="settings.light">Claro</button>
       </div>
     </div>
+
+    <div class="settings-group">
+      <p class="settings-label" data-i18n="settings.sound">Som</p>
+      <div class="settings-options">
+        <button type="button" class="settings-option" data-sound="on" data-i18n="settings.soundOn">Ativado</button>
+        <button type="button" class="settings-option" data-sound="off" data-i18n="settings.soundOff">Desativado</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -146,6 +159,17 @@
           <p class="card-body"><span data-i18n="card.bodyPrefix"></span><span class="ticket-recipient" id="ticketRecipient">Você</span><span data-i18n="card.bodyRest"> foi convidado(a) a fazer parte da Golden Order — um clã criado por um grupo de amigos, que vai chamando aos poucos quem cruza nosso caminho.</span></p>
           <p class="card-body" data-i18n="card.bodyPhilosophy">Não é sobre competir, colecionar ou acumular — é sobre juntar gente ativa e capacitada, de áreas diferentes, pra crescer e jogar junto.</p>
           <p class="card-body card-question" data-i18n="card.question">Aceita entrar para a Ordem?</p>
+          <!-- selo de validade: puramente de clima (não há checagem real
+               de expiração em lugar nenhum) — reforça que este link foi
+               emitido pra uma pessoa específica, num momento específico.
+               O número só aparece com ?para=Nome (hash determinístico do
+               nome, ver renderInviteSeal() em script.js); a validade
+               aparece sempre, contada a partir de hoje (INVITE_VALID_DAYS
+               em script.js). -->
+          <div class="invite-seal-badge" id="inviteSealBadge">
+            <p class="invite-seal-line invite-seal-number" id="inviteSealNumber" hidden><span data-i18n="invite.sealNumberLabel">Convite Nº</span> <span id="inviteSealNumberValue"></span></p>
+            <p class="invite-seal-line invite-seal-validity"><span data-i18n="invite.sealValidLabel">Válido até</span> <span id="inviteSealDateValue"></span></p>
+          </div>
           <div class="card-actions">
             <a class="invite-open-btn" href="questionario.html">
               <span class="invite-open-bracket invite-open-bracket-l" aria-hidden="true">▸</span>
@@ -177,6 +201,8 @@
   </footer>
 </main>
 
+<script src="sound.js"></script>
+<script src="pagefx.js"></script>
 <script src="i18n.js"></script>
 <script src="script.js"></script>
 

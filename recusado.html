@@ -22,6 +22,11 @@
 </head>
 <body data-i18n-doctitle="doc.title.recusado">
 
+<!-- cobre a tela ANTES da primeira pintura (evita flash) — ver
+     pagefx.js e .page-wipe em style.css pra transição completa -->
+<div class="page-wipe" id="pageWipe" aria-hidden="true"></div>
+<script>document.getElementById('pageWipe').classList.add('cover');</script>
+
 <div class="bg-fixed"></div>
 <div id="particles"></div>
 <div class="vignette"></div>
@@ -116,6 +121,7 @@
 </main>
 
 <script src="sound.js"></script>
+<script src="pagefx.js"></script>
 <script src="i18n.js"></script>
 <script src="recusado.js"></script>
 

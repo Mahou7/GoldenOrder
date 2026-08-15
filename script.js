@@ -68,6 +68,49 @@ function playSound(name) {
     window.addEventListener('golden-order-i18n-changed', render);
   })();
 
+  // --- selo de validade do convite: "Convite Nº ####" (só aparece com
+  // ?para=Nome — número vem de um hash determinístico do nome, então é
+  // sempre o mesmo pra essa pessoa) + "Válido até DD/MM/AAAA" (contado
+  // a partir de hoje). É só clima — não existe checagem real de prazo
+  // em lugar nenhum. Pra mudar a janela de validade, troque só o
+  // número abaixo. ---
+  const INVITE_VALID_DAYS = 14;
+
+  (function renderInviteSeal() {
+    const numberLine = document.getElementById('inviteSealNumber');
+    const numberValue = document.getElementById('inviteSealNumberValue');
+    const dateValue = document.getElementById('inviteSealDateValue');
+    if (!numberLine || !numberValue || !dateValue) return;
+
+    const params = new URLSearchParams(window.location.search);
+    const name = (params.get('para') || '').trim();
+
+    if (name) {
+      let hash = 0;
+      for (let i = 0; i < name.length; i++) {
+        hash = (hash * 31 + name.charCodeAt(i)) >>> 0;
+      }
+      numberValue.textContent = String(1000 + (hash % 9000));
+      numberLine.hidden = false;
+    }
+
+    const validUntil = new Date();
+    validUntil.setDate(validUntil.getDate() + INVITE_VALID_DAYS);
+    const LOCALE_BY_LANG = { pt: 'pt-BR', en: 'en-US', es: 'es-ES' };
+
+    function render() {
+      const lang = window.GoldenOrderI18n ? window.GoldenOrderI18n.getLang() : 'pt';
+      const locale = LOCALE_BY_LANG[lang] || 'pt-BR';
+      try {
+        dateValue.textContent = new Intl.DateTimeFormat(locale, { day: '2-digit', month: 'short', year: 'numeric' }).format(validUntil);
+      } catch (e) {
+        dateValue.textContent = validUntil.toLocaleDateString();
+      }
+    }
+    render();
+    window.addEventListener('golden-order-i18n-changed', render);
+  })();
+
   // --- propaga o ?para=Nome pros links de aceitar/recusar, pra que
   // recusado.html (que avisa no Discord quando alguém recusa) saiba
   // quem foi — sem parâmetro, os links continuam funcionando normal ---
@@ -130,21 +173,10 @@ function playSound(name) {
     });
   })();
 
-  // --- toca um blip antes de ir pra questionario.html/recusado.html —
-  // como um <a> normalmente navega na hora, sem isso o som mal começa
-  // e a página já trocou; aqui a navegação espera o tempinho do blip ---
-  (function wireCardActionSounds() {
-    document.querySelectorAll('.card-actions a').forEach((link) => {
-      link.addEventListener('click', (e) => {
-        if (!window.GoldenOrderSound || window.GoldenOrderSound.isMuted()) return;
-        e.preventDefault();
-        const href = link.getAttribute('href');
-        const isAccept = href.indexOf('questionario') !== -1;
-        playSound(isAccept ? 'confirm' : 'decline');
-        window.setTimeout(() => { window.location.href = href; }, 160);
-      });
-    });
-  })();
+  // --- o blip de som ao clicar em "Aceitar"/"Recusar", e a navegação
+  // em si (com a transição de tela em wipe pixelado), agora moram
+  // juntas num lugar só: ver pagefx.js, que intercepta TODO link
+  // interno do site, não só os de .card-actions. ---
 
   // --- status do servidor (definido manualmente, sem consultar nada) ---
   // Troque SERVER_STATUS pra 'offline' quando o servidor cair, e volte

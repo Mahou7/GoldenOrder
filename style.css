@@ -157,6 +157,23 @@
     box-shadow: inset 0 0 20vw rgba(0,0,0,var(--vignette-opacity));
   }
 
+  /* transição de página em "wipe" pixelado (ver pagefx.js). Escondido
+     por padrão (clip-path zerado); .cover cobre a tela inteira. A
+     curva steps() (em vez de ease/linear) é o que faz o movimento
+     parecer blocado/8-bit em vez de um fade suave comum. */
+  .page-wipe{
+    position:fixed;
+    inset:0;
+    z-index:9999;
+    background:var(--bg-0);
+    pointer-events:none;
+    clip-path:inset(0 100% 0 0);
+    transition:clip-path 0.42s steps(8, jump-end);
+  }
+  .page-wipe.cover{
+    clip-path:inset(0 0 0 0);
+  }
+
   #particles{
     position:fixed;
     inset:0;
@@ -599,6 +616,7 @@
   .card-open > *:nth-child(6){ transition-delay:0.45s; }
   .card-open > *:nth-child(7){ transition-delay:0.53s; }
   .card-open > *:nth-child(8){ transition-delay:0.61s; }
+  .card-open > *:nth-child(9){ transition-delay:0.69s; }
 
   .card-from-label{
     font-family:'Press Start 2P', monospace;
@@ -648,6 +666,30 @@
     font-size:1.3rem;
     margin-bottom:26px;
   }
+  /* selo de validade: um "carimbo" torto, como se tivesse sido batido
+     à mão sobre o convite — reforça que é um documento emitido pra
+     alguém específico, não uma página pública genérica */
+  .invite-seal-badge{
+    display:inline-flex;
+    flex-direction:column;
+    gap:4px;
+    margin:0 0 26px;
+    padding:10px 20px;
+    border:2px dashed var(--gold-4);
+    color:var(--gold-3);
+    background:rgba(0,0,0,0.12);
+    transform:rotate(-2deg);
+  }
+  .invite-seal-line{
+    margin:0;
+    font-family:'Press Start 2P', monospace;
+    font-size:0.5rem;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    line-height:1.7;
+    white-space:nowrap;
+  }
+  .invite-seal-number{ color:var(--gold-2); }
   .card-actions{
     display:flex;
     flex-wrap:wrap;
